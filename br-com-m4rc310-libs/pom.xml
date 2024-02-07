@@ -58,18 +58,6 @@
 			<version>${spqr.version}</version>
 		</dependency>
 
-		<!--		<dependency>-->
-		<!--			<groupId>io.leangen.graphql</groupId>-->
-		<!--			<artifactId>graphql-spqr-spring-boot-annotations</artifactId>-->
-		<!--			<version>${spqr.version.spring.boot}</version>-->
-		<!--		</dependency>-->
-
-		<!--		<dependency>-->
-		<!--			<groupId>io.leangen.graphql</groupId>-->
-		<!--			<artifactId>graphql-spqr-spring-boot-autoconfigure</artifactId>-->
-		<!--			<version>${spqr.version.spring.boot}</version>-->
-		<!--		</dependency>-->
-
 		<dependency>
 			<groupId>io.leangen.graphql</groupId>
 			<artifactId>graphql-spqr-spring-boot-starter</artifactId>
@@ -80,6 +68,12 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.reactivex.rxjava2</groupId>
+			<artifactId>rxjava</artifactId>
+			<version>2.1.5</version>
 		</dependency>
 
 		<dependency>

@@ -45,6 +45,8 @@ public class MGraphQLAutoConfiguration {
 	@Value("${IS_DEV:false}")
 	private boolean isDev;
 
+	private MMessageBuilder messageBuilder;
+
 	public MGraphQLAutoConfiguration() {
 	}
 	
@@ -56,8 +58,7 @@ public class MGraphQLAutoConfiguration {
 	@Scope("singleton")
 	@Bean("message_builder")
 	MMessageBuilder getMessageBuilder() {
-		MMessageBuilder mb = new MMessageBuilder();	
-		return mb;
+		return this.messageBuilder = new MMessageBuilder();
 	}
 	
 
@@ -99,10 +100,11 @@ public class MGraphQLAutoConfiguration {
 
 	@Bean
 	SecurityFilterChain loadSecurity(HttpSecurity http, MGraphQLJwtService jwt) throws Exception {
+		log.info("Add Security");
 		if (!enableSecurity) {
 			return http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll()).build();
 		}
-		return http.authorizeHttpRequests((auth) -> auth.anyRequest().authenticated()).build();
+		return http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll()).build();
 	}
 
 	@Bean

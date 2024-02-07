@@ -14,7 +14,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Data;
 
+@Data
 public class MGraphQLJwtService {
 
 	@Value("${AUTH_SECURITY_SIGNING}")
@@ -85,6 +87,10 @@ public class MGraphQLJwtService {
 		ret.signWith(SignatureAlgorithm.HS256, jwtSigningKey);
 		
 		return ret.compact();
+	}
+
+	public MUser loadUserFromToken(String token, MEnumToken test) {
+		return null;
 	}
 	
 	

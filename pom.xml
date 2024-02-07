@@ -63,9 +63,15 @@
 				<version>${project.version}</version>
 			</dependency>
 
+			<!--			<dependency>-->
+			<!--				<groupId>br.com.m4rc310</groupId>-->
+			<!--				<artifactId>br-com-m4rc310-graphql</artifactId>-->
+			<!--				<version>${project.version}</version>-->
+			<!--			</dependency>-->
+
 			<dependency>
 				<groupId>br.com.m4rc310</groupId>
-				<artifactId>br-com-m4rc310-graphql</artifactId>
+				<artifactId>br-com-m4rc310-gql</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
@@ -193,7 +199,8 @@
 
 	<modules>
 		<module>br-com-m4rc310-libs</module>
-		<module>br-com-m4rc310-graphql</module>
+		<!--		<module>br-com-m4rc310-graphql</module>-->
 		<module>br-com-m4rc310-starter</module>
+		<module>br-com-m4rc310-gql</module>
 	</modules>
 </project>

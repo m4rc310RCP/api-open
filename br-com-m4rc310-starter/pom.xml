@@ -20,7 +20,7 @@
 
 		<dependency>
 			<groupId>br.com.m4rc310</groupId>
-			<artifactId>br-com-m4rc310-graphql</artifactId>
+			<artifactId>br-com-m4rc310-gql</artifactId>
 		</dependency>
 
 	</dependencies>

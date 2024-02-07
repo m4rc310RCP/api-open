@@ -15,6 +15,7 @@ public class MUser implements UserDetails{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Long code;
 	private String username;
 	private String password;
 	private String[] roles;
