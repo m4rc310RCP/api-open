@@ -1,0 +1,12 @@
+${AnsiColor.GREEN}
+Desenvolvido por: ${AnsiColor.RED}
+  ▄▄▄·  ▄▄·        ▐ ▄ ▄▄▄▄▄
+▐█ ▀█ ▐█ ▌▪▪     •█▌▐█•██  
+▄█▀▀█ ██ ▄▄ ▄█▀▄ ▐█▐▐▌ ▐█.▪
+▐█ ▪▐▌▐███▌▐█▌.▐▌██▐█▌ ▐█▌·
+ ▀  ▀ ·▀▀▀  ▀█▄▀▪▀▀ █▪ ▀▀▀ 
+
+${AnsiColor.BLUE}
+${application.title} v.${info.app.version:1.0.0}
+Powered by Spring Boot ${spring-boot.version}
+${AnsiColor.BLACK}
