@@ -13,6 +13,9 @@ import reactor.core.publisher.FluxSink;
 
 /**
  * The Class MFluxService.
+ *
+ * @author marcelo
+ * @version $Id: $Id
  */
 public class MFluxService {
 	/** The registry. */
@@ -24,13 +27,21 @@ public class MFluxService {
 	 * @param <T>          the generic type
 	 * @param type         the type
 	 * @param key          the key
-	 * @param defaultValue the default value
 	 * @return the publisher
 	 */
 	public <T> Publisher<T> publish(Class<T> type, Object key) {
 		return publish(type, key, null);
 	}
 
+	/**
+	 * <p>publish.</p>
+	 *
+	 * @param type a {@link java.lang.Class} object
+	 * @param key a {@link java.lang.Object} object
+	 * @param defaultValue a T object
+	 * @param <T> a T class
+	 * @return a {@link org.reactivestreams.Publisher} object
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> Publisher<T> publish(Class<T> type, Object key, T defaultValue) {
 		String skey = makeId(type, key);
@@ -51,6 +62,15 @@ public class MFluxService {
 		
 	}
 
+	/**
+	 * <p>publishList.</p>
+	 *
+	 * @param type a {@link java.lang.Class} object
+	 * @param key a {@link java.lang.Object} object
+	 * @param defaultValue a {@link java.util.List} object
+	 * @param <T> a T class
+	 * @return a {@link reactor.core.publisher.Flux} object
+	 */
 	public <T> Flux<List<T>> publishList(Class<T> type, Object key, List<T> defaultValue) {
 		String skey = makeId(type, key);
 		return Flux.create(fs -> {
@@ -78,7 +98,7 @@ public class MFluxService {
 	 * @param <T>   the generic type
 	 * @param key   the key
 	 * @param value the value
-	 * @throws Exception the exception
+	 * @throws java.lang.Exception the exception
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void callPublish(Object key, T value) throws Exception {
@@ -121,7 +141,7 @@ public class MFluxService {
 	 * @param type  the type
 	 * @param key   the key
 	 * @param value the value
-	 * @throws Exception the exception
+	 * @throws java.lang.Exception the exception
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void callPublish(Class<T> type, Object key, T value) throws Exception {
@@ -133,6 +153,14 @@ public class MFluxService {
 	    }
 	}
 	
+	/**
+	 * <p>callListPublish.</p>
+	 *
+	 * @param type a {@link java.lang.Class} object
+	 * @param key a {@link java.lang.Object} object
+	 * @param list a {@link java.util.List} object
+	 * @param <T> a T class
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> void callListPublish(Class<T> type, Object key, List<T> list) {
 		String skey = makeId(type, key);

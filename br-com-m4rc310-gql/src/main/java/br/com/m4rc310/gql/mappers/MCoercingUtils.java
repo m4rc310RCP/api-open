@@ -8,6 +8,9 @@ import graphql.schema.CoercingSerializeException;
 
 /**
  * The Class MCoercingUtils.
+ *
+ * @author marcelo
+ * @version $Id: $Id
  */
 public class MCoercingUtils {
 	

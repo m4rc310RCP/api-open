@@ -28,6 +28,12 @@ import io.leangen.graphql.spqr.spring.web.apollo.PerConnectionApolloHandler;
 import io.leangen.graphql.spqr.spring.web.mvc.websocket.GraphQLWebSocketExecutor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>MGraphQLWsAutoConfiguration class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 @AutoConfiguration
 @EnableWebSocket
@@ -43,6 +49,13 @@ public class MGraphQLWsAutoConfiguration extends WebSocketAutoConfiguration  {
 	@Autowired
 	private MGraphQLJwtService jwtService;
 
+	/**
+	 * <p>Constructor for MGraphQLWsAutoConfiguration.</p>
+	 *
+	 * @param graphQL a {@link graphql.GraphQL} object
+	 * @param config a {@link io.leangen.graphql.spqr.spring.autoconfigure.SpqrProperties} object
+	 * @param dataLoaderRegistryFactory a {@link java.util.Optional} object
+	 */
 	public MGraphQLWsAutoConfiguration(GraphQL graphQL, SpqrProperties config,
 			Optional<DataLoaderRegistryFactory> dataLoaderRegistryFactory) {
 		super(graphQL, config, dataLoaderRegistryFactory);
@@ -56,6 +69,7 @@ public class MGraphQLWsAutoConfiguration extends WebSocketAutoConfiguration  {
 		log.info("~> Loading {}...", getClass().getName());
 	}
 	
+	/** {@inheritDoc} */
 	@Override
 	public PerConnectionApolloHandler webSocketHandler(GraphQLWebSocketExecutor executor) {
 		

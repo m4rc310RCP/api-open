@@ -14,17 +14,17 @@ import graphql.schema.GraphQLScalarType;
 
 /**
  * The Class MDateMapper.
+ *
+ * @author marcelo
+ * @version $Id: $Id
  */
 @MMapper
 public class MDateMapper extends MGraphQLScalarType<MDate> {
 
 	/**
-	 * Inits the.
+	 * {@inheritDoc}
 	 *
-	 * @param element    the element
-	 * @param type       the type
-	 * @param annotation the annotation
-	 * @return the graph QL scalar type
+	 * Inits the.
 	 */
 	@Override
 	public GraphQLScalarType init(AnnotatedElement element, AnnotatedType type, MDate annotation) {

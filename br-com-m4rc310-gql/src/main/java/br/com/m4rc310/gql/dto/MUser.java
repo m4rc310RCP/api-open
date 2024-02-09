@@ -8,8 +8,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.leangen.graphql.annotations.GraphQLIgnore;
+import io.leangen.graphql.annotations.GraphQLQuery;
 import lombok.Data;
 
+/**
+ * <p>MUser class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Data
 public class MUser implements UserDetails{
 	
@@ -24,6 +32,7 @@ public class MUser implements UserDetails{
 	private boolean credentialsNonExpired;
 	private boolean enabled;
 
+	/** {@inheritDoc} */
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new ArrayList<>();

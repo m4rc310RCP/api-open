@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.CloseStatus;
@@ -45,7 +44,12 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
-/** The Constant log. */
+/**
+ * The Constant log.
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 @Import({ MGraphQLJwtService.class })
 public class MTextWebSocketHandler extends TextWebSocketHandler {
@@ -79,10 +83,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * After connection established.
+	 * {@inheritDoc}
 	 *
-	 * @param session the session
-	 * @throws Exception the exception
+	 * After connection established.
 	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -94,10 +97,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * After connection closed.
+	 * {@inheritDoc}
 	 *
-	 * @param session the session
-	 * @param status  the status
+	 * After connection closed.
 	 */
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
@@ -113,11 +115,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * Handle text message.
+	 * {@inheritDoc}
 	 *
-	 * @param session the session
-	 * @param message the message
-	 * @throws Exception the exception
+	 * Handle text message.
 	 */
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -193,28 +193,37 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 	private MUser fromPayload(String payload) throws Exception {
 
-		final String BEARER = "Bearer";
-		final String BASIC = "Basic";
-		final String TEST = "Test";
-
+//		final String BEARER = "Bearer";
+//		final String BASIC = "Basic";
+//		final String TEST = "Test";
+//		
+//
 		ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
 		MInitMessage message = mapper.readValue(payload, MInitMessage.class);
 		Map<String, Object> mpay = message.getPayload();
 
 		String token = (String) mpay.get("Authorization");
 		token = token.trim();
-
-		if (token.startsWith(TEST) && jwtService.isDev()) {
-			token = token.replace(TEST, "").trim();
-			return jwtService.loadUserFromToken(token, MEnumToken.TEST);
-		} else if (token.startsWith(BEARER)) {
-			token = token.replace(BEARER, "").trim();
-			return jwtService.loadUserFromToken(token, MEnumToken.BEARER);
-		} else if (token.startsWith(BASIC)) {
-			token = token.replace(BASIC, "").trim();
-			return jwtService.loadUserFromToken(token, MEnumToken.BASIC);
+		
+		for(MEnumToken type : MEnumToken.values()) {
+			if (token.startsWith(type.getDescription())) {
+				token = token.replace(type.getDescription(), "").trim();
+				return jwtService.getMUser(type, token);
+			}
 		}
+		
+		
+//
+//		if (token.startsWith(TEST) && jwtService.isDev()) {
+//			token = token.replace(TEST, "").trim();
+//			return jwtService.loadUserFromToken(token, MEnumToken.TEST);
+//		} else if (token.startsWith(BEARER)) {
+//			token = token.replace(BEARER, "").trim();
+//			return jwtService.loadUserFromToken(token, MEnumToken.BEARER);
+//		} else if (token.startsWith(BASIC)) {
+//			token = token.replace(BASIC, "").trim();
+//			return jwtService.loadUserFromToken(token, MEnumToken.BASIC);
+//		}
 
 		return null;
 	}
@@ -253,10 +262,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * Handle transport error.
+	 * {@inheritDoc}
 	 *
-	 * @param session   the session
-	 * @param exception the exception
+	 * Handle transport error.
 	 */
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) {

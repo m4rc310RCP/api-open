@@ -21,6 +21,12 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>MMessageBuilder class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 public class MMessageBuilder {
 
@@ -41,6 +47,9 @@ public class MMessageBuilder {
 	@Autowired
 	private MessageSource messageSource;
 
+	/**
+	 * <p>Constructor for MMessageBuilder.</p>
+	 */
 	public MMessageBuilder() {
 	}
 

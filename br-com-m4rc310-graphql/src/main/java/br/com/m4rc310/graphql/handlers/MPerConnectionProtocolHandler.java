@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PreDestroy;
+
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketMessage;
@@ -14,7 +16,6 @@ import br.com.m4rc310.graphql.security.MGraphQLJwtService;
 import graphql.GraphQL;
 import io.leangen.graphql.spqr.spring.web.apollo.PerConnectionApolloHandler;
 import io.leangen.graphql.spqr.spring.web.mvc.websocket.GraphQLWebSocketExecutor;
-import jakarta.annotation.PreDestroy;
 
 /** The Constant log. */
 public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {

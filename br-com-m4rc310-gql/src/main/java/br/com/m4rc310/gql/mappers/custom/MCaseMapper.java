@@ -11,17 +11,17 @@ import graphql.schema.GraphQLScalarType;
 
 /**
  * The Class MCaseMapper.
+ *
+ * @author marcelo
+ * @version $Id: $Id
  */
 @MMapper
 public class MCaseMapper extends MGraphQLScalarType<MCase> {
 
 	/**
-	 * Inits the.
+	 * {@inheritDoc}
 	 *
-	 * @param element    the element
-	 * @param type       the type
-	 * @param annotation the annotation
-	 * @return the graph QL scalar type
+	 * Inits the.
 	 */
 	@Override
 	public GraphQLScalarType init(AnnotatedElement element, AnnotatedType type, MCase annotation) {

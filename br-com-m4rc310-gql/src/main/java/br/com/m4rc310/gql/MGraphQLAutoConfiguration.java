@@ -53,6 +53,12 @@ import io.leangen.graphql.generator.mapping.TypeMapper;
 import io.leangen.graphql.metadata.messages.MessageBundle;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>MGraphQLAutoConfiguration class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 @AutoConfiguration
 @EnableWebSecurity
@@ -104,6 +110,16 @@ public class MGraphQLAutoConfiguration {
 		return key -> getString(messageBuilder, messageSource, key);
 	}
 
+	
+	/**
+	 * <p>getString.</p>
+	 *
+	 * @param messageBuilder a {@link br.com.m4rc310.gql.messages.MMessageBuilder} object
+	 * @param messageSource a {@link org.springframework.context.MessageSource} object
+	 * @param pattern a {@link java.lang.String} object
+	 * @param args a {@link java.lang.Object} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String getString(MMessageBuilder messageBuilder, MessageSource messageSource, String pattern, Object... args) {
 		String REGEX = "[^a-zA-Z0-9_]+";
 		String ret = pattern.replaceAll(REGEX, "_");

@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Objects;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.m4rc310.graphql.security.dto.MUser;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 /** The Constant log. */
@@ -74,8 +75,8 @@ public class MGraphQLSecurity {
 				.addFilterBefore(basicAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(bearerAuthFilter, UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests(auth -> {
-					auth.requestMatchers(HttpMethod.GET, "/gui", "/graphql").permitAll();
-					auth.requestMatchers(HttpMethod.POST, "/graphql").authenticated();
+					auth.regexMatchers(HttpMethod.GET, "/gui", "/graphql").permitAll();
+					auth.regexMatchers(HttpMethod.POST, "/graphql").authenticated();
 					auth.anyRequest().denyAll();
 				}).build();
 	}

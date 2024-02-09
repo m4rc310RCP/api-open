@@ -19,6 +19,12 @@ import io.leangen.graphql.spqr.spring.web.dto.GraphQLRequest;
 import lombok.Data;
 import lombok.Getter;
 
+/**
+ * <p>MMessage class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true, include = JsonTypeInfo.As.EXISTING_PROPERTY)
@@ -33,30 +39,46 @@ import lombok.Getter;
 public class MMessage {
 
 
+	/** Constant <code>GQL_CONNECTION_INIT="connection_init"</code> */
 	public static final String GQL_CONNECTION_INIT = "connection_init";
 
+	/** Constant <code>GQL_CONNECTION_TERMINATE="connection_terminate"</code> */
 	public static final String GQL_CONNECTION_TERMINATE = "connection_terminate";
 
+	/** Constant <code>GQL_START="start"</code> */
 	public static final String GQL_START = "start";
 
+	/** Constant <code>GQL_STOP="stop"</code> */
 	public static final String GQL_STOP = "stop";
 
+	/** Constant <code>GQL_CONNECTION_ACK="connection_ack"</code> */
 	public static final String GQL_CONNECTION_ACK = "connection_ack";
 
+	/** Constant <code>GQL_CONNECTION_ERROR="connection_error"</code> */
 	public static final String GQL_CONNECTION_ERROR = "connection_error";
 
+	/** Constant <code>GQL_CONNECTION_KEEP_ALIVE="ka"</code> */
 	public static final String GQL_CONNECTION_KEEP_ALIVE = "ka";
 
+	/** Constant <code>GQL_DATA="data"</code> */
 	public static final String GQL_DATA = "data";
 
+	/** Constant <code>GQL_ERROR="error"</code> */
 	public static final String GQL_ERROR = "error";
 
+	/** Constant <code>GQL_COMPLETE="complete"</code> */
 	public static final String GQL_COMPLETE = "complete";
 
 	private final String id;
 
 	private final String type;
 
+	/**
+	 * <p>Constructor for MMessage.</p>
+	 *
+	 * @param id a {@link java.lang.String} object
+	 * @param type a {@link java.lang.String} object
+	 */
 	public MMessage(String id, String type) {
 		this.id = id;
 		this.type = type;

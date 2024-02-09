@@ -110,7 +110,7 @@ public class MGraphQLAutoConfiguration {
 	@Bean
 	WebSecurityCustomizer webSecurityCustomizer() {
 		if (!enableSecurity) {
-			return (web) -> web.ignoring().requestMatchers("/*");
+			return (web) -> web.ignoring().regexMatchers("/*");
 		}
 		return null;
 	}
