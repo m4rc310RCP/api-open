@@ -1,6 +1,5 @@
 package br.com.m4rc310.gql.security;
 
-import br.com.m4rc310.gql.dto.MAuthToken;
 import br.com.m4rc310.gql.dto.MUser;
 
 /**
