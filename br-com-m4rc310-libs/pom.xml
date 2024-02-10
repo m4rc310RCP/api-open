@@ -9,11 +9,12 @@
 	<parent>
 		<groupId>br.com.m4rc310</groupId>
 		<artifactId>open</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 
 	<properties>
-		<spqr.version>0.12.4</spqr.version>
+<!--		<spqr.version>0.12.4</spqr.version>-->
+		<spqr.version>0.12.1</spqr.version>
 		<spqr.version.spring.boot>1.0.1</spqr.version.spring.boot>
 		<jjwt.version>0.9.1</jjwt.version>
 		<json.version>20230227</json.version>

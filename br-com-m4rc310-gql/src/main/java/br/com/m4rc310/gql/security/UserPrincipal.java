@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import br.com.m4rc310.gql.dto.MUser;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>UserPrincipal class.</p>
@@ -17,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author marcelo
  * @version $Id: $Id
  */
-@Slf4j
 @Data
 public class UserPrincipal {
 	
@@ -49,4 +47,6 @@ public class UserPrincipal {
 	public static UserPrincipal create(MUser user){
         return new UserPrincipal(user);
     }
+	
+	
 }

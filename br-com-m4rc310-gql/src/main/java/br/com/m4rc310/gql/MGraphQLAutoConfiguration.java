@@ -37,6 +37,7 @@ import br.com.m4rc310.gql.messages.MMessageBuilder;
 import br.com.m4rc310.gql.properties.MGraphQLProperty;
 import br.com.m4rc310.gql.security.IMAuthUserProvider;
 import br.com.m4rc310.gql.security.MGraphQLSecurity;
+import br.com.m4rc310.gql.security.UserDetailsServiceImpl;
 import br.com.m4rc310.gql.services.MFluxService;
 import graphql.GraphQL;
 import graphql.GraphQL.Builder;
@@ -110,6 +111,7 @@ public class MGraphQLAutoConfiguration {
 		return key -> getString(messageBuilder, messageSource, key);
 	}
 
+	
 	
 	/**
 	 * <p>getString.</p>
@@ -227,15 +229,27 @@ public class MGraphQLAutoConfiguration {
 		};
 	}
 	
+	@Bean
+	MGraphQLSecurity loadMGraphQLSecurity() {
+		return new MGraphQLSecurity();
+	}
+	
 	
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, MGraphQLJwtService jwt) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity http, MGraphQLJwtService jwt, MGraphQLSecurity graphQLSecurity, MFluxService flux) throws Exception {
 		if (Objects.isNull(authUserProvider)) {
 			String error = "Implement a %s in main project.";
 			error = String.format(error, IMAuthUserProvider.class.getName());
 			throw new UnsupportedOperationException(error);
 		}
-		return new MGraphQLSecurity().getSecurityFilterChain(http, jwt, authUserProvider);
+		return graphQLSecurity.getSecurityFilterChain(http, jwt, authUserProvider, flux);
+	}
+	 
+	
+	
+	@Bean
+	UserDetailsServiceImpl loadUserDetailsServiceImpl() {
+		return new UserDetailsServiceImpl();
 	}
 	
 }

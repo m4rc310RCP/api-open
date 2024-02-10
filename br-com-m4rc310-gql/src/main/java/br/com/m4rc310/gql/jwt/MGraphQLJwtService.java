@@ -218,7 +218,6 @@ public class MGraphQLJwtService {
 	}
 
 	public MUser getMUser(HttpServletRequest request) throws Exception {
-
 		String token = getToken(request);
 		MEnumToken type = getMEnumToken(request);
 		return getMUser(type, token);

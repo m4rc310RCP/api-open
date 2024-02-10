@@ -1,9 +1,7 @@
 package br.com.m4rc310.gql.security;
 
 import br.com.m4rc310.gql.dto.MAuthToken;
-import br.com.m4rc310.gql.dto.MEnumToken;
 import br.com.m4rc310.gql.dto.MUser;
-import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 
 /**
  * <p>IMAuthUserProvider interface.</p>

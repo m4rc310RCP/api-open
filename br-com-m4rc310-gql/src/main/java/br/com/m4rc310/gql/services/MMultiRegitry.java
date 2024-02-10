@@ -116,7 +116,8 @@ public class MMultiRegitry<K, T> {
 	     * @param key a K object
 	     * @param value a T object
 	     */
-	    public void publishValue(K key, T value) {
+	    @SuppressWarnings("unchecked")
+		public void publishValue(K key, T value) {
 	        List<FluxSink<?>> sinks = map.get(key);
 	        if (sinks != null) {
 	            sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));

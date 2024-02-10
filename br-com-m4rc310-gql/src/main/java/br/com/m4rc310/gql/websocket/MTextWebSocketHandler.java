@@ -25,7 +25,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.m4rc310.gql.dto.MAuthToken;
 import br.com.m4rc310.gql.dto.MEnumToken;
 import br.com.m4rc310.gql.dto.MUser;
 import br.com.m4rc310.gql.dto.messages.MMessage;
@@ -33,6 +32,7 @@ import br.com.m4rc310.gql.dto.messages.MMessage.MInitMessage;
 import br.com.m4rc310.gql.dto.messages.MMessage.MStartMessage;
 import br.com.m4rc310.gql.dto.messages.MMessages;
 import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
+import br.com.m4rc310.gql.security.MGraphQLSecurity;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import io.leangen.graphql.spqr.spring.web.apollo.ApolloMessages;
@@ -61,8 +61,10 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	private final Map<String, Disposable> subscriptions = new ConcurrentHashMap<>();
 	private final AtomicReference<ScheduledFuture<?>> keepAlive = new AtomicReference<>();
 
-	@Autowired
 	private MGraphQLJwtService jwtService;
+	
+	@Autowired
+	private MGraphQLSecurity security;
 
 	/**
 	 * Instantiates a new m text web socket handler.
@@ -96,6 +98,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
+	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -122,7 +125,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		try {
-
 			MMessage mmessage;
 			try {
 				mmessage = MMessages.from(message);
@@ -139,7 +141,8 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 				try {
 					MUser user = fromPayload(message.getPayload());
 					if (jwtService.validateUser(user)) {
-						SecurityContextHolder.getContext().setAuthentication(new MAuthToken(user));
+						//SecurityContextHolder.getContext().setAuthentication(new MAuthToken(user));
+						security.authenticate(user);
 						session.sendMessage(MMessages.connectionAck());
 						if (taskScheduler != null) {
 							session.sendMessage(MMessages.keepAlive());
@@ -148,7 +151,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 						throw new Exception("Error connection");
 					}
 				} catch (Exception e) {
-					SecurityContextHolder.getContext().setAuthentication(null);
+					security.resetAuthenticate();
 					fatalError(session, e);
 				}
 
@@ -177,7 +180,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 				if (toStop != null) {
 					toStop.dispose();
 					subscriptions.remove(mmessage.getId(), toStop);
-					SecurityContextHolder.getContext().setAuthentication(null);
+					security.resetAuthenticate();
 				}
 				break;
 			case GQL_CONNECTION_TERMINATE:
@@ -329,6 +332,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 			subscriptions.clear();
 		}
 	}
+	
 
 	/**
 	 * Fatal error.
