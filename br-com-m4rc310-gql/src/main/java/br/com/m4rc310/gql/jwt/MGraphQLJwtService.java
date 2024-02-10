@@ -1,14 +1,21 @@
 package br.com.m4rc310.gql.jwt;
 
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.com.m4rc310.gql.dto.MEnumToken;
 import br.com.m4rc310.gql.dto.MUser;
@@ -51,6 +58,9 @@ public class MGraphQLJwtService {
 
 	@Autowired(required = false)
 	private IMAuthUserProvider authUserProvider;
+	
+	@Autowired
+	private PasswordEncoder encoder;
 
 	private final String AUTHORIZATION = "Authorization";
 
@@ -209,9 +219,20 @@ public class MGraphQLJwtService {
 			int i = token.indexOf(":");
 			String username = token.substring(0, i);
 			String password = token.substring(i + 1);
+			password= encoder.encode(password);
 			return authUserProvider.authUser(username, password);
 		case BASIC:
+			String sbasic = decrypt(token);
+			i = sbasic.indexOf(":");
+			username = sbasic.substring(0, i);
+			password = sbasic.substring(i + 1);
+			return authUserProvider.authUser(username, password);
 		case BEARER:
+			if (isTokenExpirate(token)) {
+				throw new Exception("Token as expiraded.");
+			}
+			username = extractUsername(token);
+			return authUserProvider.getUserFromUsername(username);
 		default:
 			return null;
 		}
@@ -221,6 +242,91 @@ public class MGraphQLJwtService {
 		String token = getToken(request);
 		MEnumToken type = getMEnumToken(request);
 		return getMUser(type, token);
+	}
+	
+	/**
+	 * Encrypt.
+	 *
+	 * @param text the text
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public String encrypt(String text) throws Exception {
+		return encrypt(text, jwtSigningKey);
+	}
+
+	/**
+	 * Encrypt.
+	 *
+	 * @param text the text
+	 * @param key  the key
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public String encrypt(String text, String key) throws Exception {
+		byte[] keyByte = getKeyByte(key);
+		SecretKeySpec keyAES = new SecretKeySpec(keyByte, "AES");
+		Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+		cipher.init(Cipher.ENCRYPT_MODE, keyAES);
+		return Base64.getEncoder().encodeToString(cipher.doFinal(text.getBytes()));
+	}
+
+	/**
+	 * Decrypt.
+	 *
+	 * @param text the text
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public String decrypt(String text) throws Exception {
+		return decrypt(text, jwtSigningKey);
+	}
+
+	/**
+	 * Decrypt.
+	 *
+	 * @param text the text
+	 * @param key  the key
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public String decrypt(String text, String key) throws Exception {		
+		byte[] keyByte = getKeyByte(key);
+		byte[] textDecoded = Base64.getDecoder().decode(text);
+		
+		SecretKeySpec keyAES = new SecretKeySpec(keyByte, "AES");
+		Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+		cipher.init(Cipher.DECRYPT_MODE, keyAES);
+		byte[] textoDescriptografado = cipher.doFinal(textDecoded);
+		return new String(textoDescriptografado);
+	}
+
+	/**
+	 * Gets the key byte.
+	 *
+	 * @return the key byte
+	 * @throws Exception the exception
+	 */
+	public byte[] getKeyByte() throws Exception {
+		return getKeyByte(jwtSigningKey);
+	}
+
+	/**
+	 * Gets the key byte.
+	 *
+	 * @param skey the skey
+	 * @return the key byte
+	 * @throws Exception the exception
+	 */
+	public byte[] getKeyByte(String skey) throws Exception {
+		jwtSigningKey = skey;
+		//jwtSalt = "m4rc310";
+		//iterationCount = 10000;
+		//keyLength = 128;
+
+		PBEKeySpec spec = new PBEKeySpec(jwtSigningKey.toCharArray(), jwtSalt.getBytes(), iterationCount, keyLength);
+		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+		return factory.generateSecret(spec).getEncoded();
 	}
 
 }

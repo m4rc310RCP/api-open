@@ -25,6 +25,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -89,6 +91,11 @@ public class MGraphQLAutoConfiguration {
 	@Bean
 	MFluxService loadMFluxService() {
 		return new MFluxService();
+	}
+	
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 	@Scope("singleton")
