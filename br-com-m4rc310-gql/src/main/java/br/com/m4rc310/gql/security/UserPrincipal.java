@@ -1,5 +1,6 @@
 package br.com.m4rc310.gql.security;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,7 +18,9 @@ import lombok.Data;
  * @version $Id: $Id
  */
 @Data
-public class UserPrincipal {
+public class UserPrincipal implements Serializable{
+	
+	private static final long serialVersionUID = 4607336427719715274L;
 	
 	private String username;
     private String password;
