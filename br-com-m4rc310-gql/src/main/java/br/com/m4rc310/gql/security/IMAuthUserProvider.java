@@ -36,13 +36,4 @@ public interface IMAuthUserProvider {
 	 * @return a boolean
 	 */
 	boolean isValidUser(MUser user);
-
-	/**
-	 * <p>validUserAccess.</p>
-	 *
-	 * @param authToken a {@link br.com.m4rc310.gql.dto.MAuthToken} object
-	 * @param roles an array of {@link java.lang.String} objects
-	 * @throws java.lang.Exception if any.
-	 */
-	void validUserAccess(MAuthToken authToken, String[] roles) throws Exception;
 }
