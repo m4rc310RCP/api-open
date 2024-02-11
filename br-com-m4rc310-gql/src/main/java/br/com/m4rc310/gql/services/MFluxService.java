@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import org.reactivestreams.Publisher;
 
+import br.com.m4rc310.gql.dto.MUser;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -20,6 +21,8 @@ import reactor.core.publisher.FluxSink;
 public class MFluxService {
 	/** The registry. */
 	protected final MMultiRegitry<String, Object> registry = new MMultiRegitry<>();
+	
+	private MUser user;
 
 	/**
 	 * Publish.
@@ -42,7 +45,6 @@ public class MFluxService {
 	 * @param <T> a T class
 	 * @return a {@link org.reactivestreams.Publisher} object
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> Publisher<T> publish(Class<T> type, Object key, T defaultValue) {
 		String skey = makeId(type, key);
 //		return (Publisher<T>) Flux.create(fs -> {
@@ -303,5 +305,13 @@ public class MFluxService {
 		fields.addAll(Arrays.asList(type.getDeclaredFields()));
 
 		return fields;
+	}
+	
+	public void setUser(MUser user) {
+		this.user = user;
+	}
+	
+	public MUser getUser() {
+		return user;
 	}
 }

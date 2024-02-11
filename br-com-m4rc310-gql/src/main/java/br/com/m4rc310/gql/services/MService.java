@@ -8,6 +8,9 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 
 /**
  * <p>MService class.</p>
@@ -21,6 +24,12 @@ public class MService {
 
 	@Autowired
 	protected MFluxService flux;
+	
+	@Autowired
+	protected PasswordEncoder encoder;
+	
+	@Autowired
+	protected MGraphQLJwtService jwt;
 
 	/**
 	 * <p>convertStreamToString.</p>

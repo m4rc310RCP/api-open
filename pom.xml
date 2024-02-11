@@ -5,6 +5,7 @@
 	<groupId>br.com.m4rc310</groupId>
 	<artifactId>open</artifactId>
 	<version>1.0.6</version>
+
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>Open Sales</description>
@@ -26,8 +27,9 @@
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.source>17</maven.compiler.source>
 		<java.version>17</java.version>
-		<spqr.version>0.12.1</spqr.version>
-		<spring-boot.version>3.2.1</spring-boot.version>
+		<spqr.version>0.12.4</spqr.version>
+<!--		<spring-boot.version>2.7.16</spring-boot.version>-->
+		<spring-boot.version>3.2.2</spring-boot.version>
 		<fastjson.version>1.2.24</fastjson.version>
 		<spqr.utils.version>0.0.7</spqr.utils.version>
 	</properties>

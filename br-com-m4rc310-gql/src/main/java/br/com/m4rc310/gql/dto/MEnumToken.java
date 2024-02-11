@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public enum MEnumToken {
-	TEST("Test"), BASIC("Basic"), BEARER("Bearer");
+	TEST("Test"), BASIC("Basic"), BEARER("Bearer"), NONE("none");
 
 	@Getter
 	private String description;

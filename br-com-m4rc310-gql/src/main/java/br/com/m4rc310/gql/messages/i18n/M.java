@@ -1,7 +1,4 @@
-/*
- * 
- */
-package br.com.m4rc310.graphql.messages.i18n;
+package br.com.m4rc310.gql.messages.i18n;
 
 import java.text.MessageFormat;
 import java.util.Locale;

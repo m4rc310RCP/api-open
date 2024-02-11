@@ -18,4 +18,10 @@ public class MGraphQLProperty {
 	private boolean enable;
 	private String path;
 	private String classname;
+	private Security security = new Security();
+	
+	@Data
+	public class Security{
+		private boolean enable;
+	}
 }

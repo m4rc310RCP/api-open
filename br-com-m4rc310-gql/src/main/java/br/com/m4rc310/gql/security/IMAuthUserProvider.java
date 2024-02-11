@@ -1,9 +1,7 @@
 package br.com.m4rc310.gql.security;
 
 import br.com.m4rc310.gql.dto.MAuthToken;
-import br.com.m4rc310.gql.dto.MEnumToken;
 import br.com.m4rc310.gql.dto.MUser;
-import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 
 /**
  * <p>IMAuthUserProvider interface.</p>
@@ -31,17 +29,6 @@ public interface IMAuthUserProvider {
 	 */
 	MUser getUserFromUsername(String username);
 	
-	/**
-	 * <p>loadUser.</p>
-	 *
-	 * @param jwt a {@link br.com.m4rc310.gql.jwt.MGraphQLJwtService} object
-	 * @param type a {@link br.com.m4rc310.gql.dto.MEnumToken} object
-	 * @param token a {@link java.lang.String} object
-	 * @return a {@link br.com.m4rc310.gql.dto.MUser} object
-	 * @throws java.lang.Exception if any.
-	 */
-	MUser loadUser(MGraphQLJwtService jwt, MEnumToken type, String token) throws Exception;
-
 	/**
 	 * <p>isValidUser.</p>
 	 *

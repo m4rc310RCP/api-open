@@ -1,5 +1,6 @@
 package br.com.m4rc310.gql.security;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,7 +18,9 @@ import lombok.Data;
  * @version $Id: $Id
  */
 @Data
-public class UserPrincipal {
+public class UserPrincipal implements Serializable{
+	
+	private static final long serialVersionUID = 4607336427719715274L;
 	
 	private String username;
     private String password;
@@ -33,7 +36,7 @@ public class UserPrincipal {
 		this.password = user.getPassword();
 		if (Objects.nonNull(user.getRoles())) {
 			this.authorities = user.getAuthorities().stream().map(role -> {
-				return new SimpleGrantedAuthority("ROLE_".concat(role.getAuthority()));
+				return new SimpleGrantedAuthority(role.getAuthority());
 			}).collect(Collectors.toList());
 		}
 	}
@@ -47,4 +50,6 @@ public class UserPrincipal {
 	public static UserPrincipal create(MUser user){
         return new UserPrincipal(user);
     }
+	
+	
 }

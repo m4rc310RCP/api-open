@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * <p>MAuthToken class.</p>
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author marcelo
  * @version $Id: $Id
  */
-@Slf4j
 public class MAuthToken extends UsernamePasswordAuthenticationToken{
 
 	private static final long serialVersionUID = 7895979137011266408L;
@@ -29,7 +28,7 @@ public class MAuthToken extends UsernamePasswordAuthenticationToken{
 //				Arrays.stream(user.getRoles()).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
 //		super(user, user.getUsername(), user.getAuthorities());
 //		super(user.getUsername(), user.getPassword(), user.getAuthorities());
-		super(user.getUsername(), user.getPassword(),
+		super(user, user.getPassword(),
 				Arrays.stream(user.getRoles()).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
 	}
 	
