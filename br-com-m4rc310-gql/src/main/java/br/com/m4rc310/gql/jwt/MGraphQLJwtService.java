@@ -219,7 +219,7 @@ public class MGraphQLJwtService {
 			int i = token.indexOf(":");
 			String username = token.substring(0, i);
 			String password = token.substring(i + 1);
-			password= encoder.encode(password);
+//			password= encoder.encode(password);
 			return authUserProvider.authUser(username, password);
 		case BASIC:
 			String sbasic = decrypt(token);

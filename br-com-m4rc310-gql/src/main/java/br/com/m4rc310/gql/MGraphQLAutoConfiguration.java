@@ -9,8 +9,16 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.model.naming.EntityNaming;
+import org.hibernate.boot.model.naming.Identifier;
+import org.hibernate.boot.model.naming.ImplicitNamingStrategy;
+import org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl;
+import org.hibernate.boot.spi.MetadataBuildingContext;
+import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -43,12 +51,14 @@ import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 import br.com.m4rc310.gql.mappers.annotations.MAuth;
 import br.com.m4rc310.gql.mappers.annotations.MMapper;
 import br.com.m4rc310.gql.messages.MMessageBuilder;
+import br.com.m4rc310.gql.messages.i18n.M;
 import br.com.m4rc310.gql.properties.MGraphQLProperty;
 import br.com.m4rc310.gql.security.IMAuthUserProvider;
 import br.com.m4rc310.gql.security.MGraphQLSecurity;
 import br.com.m4rc310.gql.security.UserDetailsServiceImpl;
 import br.com.m4rc310.gql.security.UserPrincipal;
 import br.com.m4rc310.gql.services.MFluxService;
+import br.com.m4rc310.gql.strategies.MPhysicalNamingImpl;
 import graphql.GraphQL;
 import graphql.GraphQL.Builder;
 import graphql.execution.AsyncExecutionStrategy;
@@ -90,7 +100,7 @@ public class MGraphQLAutoConfiguration {
 	private boolean isDev;
 
 	@Autowired(required = false)
-	private IMAuthUserProvider provider;
+	private MUserProvider provider;
 
 	@Bean("br.com.m4rc310.gql.enable")
 	void init() {
@@ -109,7 +119,11 @@ public class MGraphQLAutoConfiguration {
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		if(provider != null) {
+			provider.setEncoder(encoder);
+		}
+		return encoder;
 	}
 
 	@Scope("singleton")
@@ -123,7 +137,7 @@ public class MGraphQLAutoConfiguration {
 	MessageSource getMessageSource() {
 		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
 		source.setBasenames("messages/message");
-		log.info("Load message source {}", source);
+		log.debug("Load message source {}", source);
 		return source;
 	}
 
@@ -165,6 +179,21 @@ public class MGraphQLAutoConfiguration {
 			return ret;
 		}
 	}
+	
+	/**
+	 * Load message.
+	 *
+	 * @return the m
+	 */
+	@Bean
+	M loadMessage() {
+		M message = new M();
+		if (provider != null) {
+			provider.setM(message);
+		}
+		return message;
+	}
+
 
 	@Component
 	public class MApplicationListener implements ApplicationListener<ApplicationReadyEvent> {
@@ -264,9 +293,25 @@ public class MGraphQLAutoConfiguration {
 		public Object aroundInvoke(InvocationContext context, Continuation continuation) throws Exception {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			if (Objects.nonNull(authentication)) {
+				
 				UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+				boolean isBasic = principal == null ? false
+						: principal.getAuthorities().stream()
+						.anyMatch(ga -> "basic".equalsIgnoreCase(ga.getAuthority()));
+				
+				
 				MAuth auth = context.getResolver().getExecutable().getDelegate().getAnnotation(MAuth.class);
+				if (Objects.isNull(auth) && isBasic) {
+					throw getWebException(401, "Access unauthorizade. User with basic privileges!");
+				}
+				
 				if (Objects.nonNull(auth)) {
+					if (isBasic) {
+						if (!Arrays.asList(auth.roles()).contains("basic")) {
+							throw getWebException(401, "Access unauthorizade. User with basic privileges!");
+						}
+					}
+					
 					boolean isAuth = principal == null ? false
 							: principal.getAuthorities().stream()
 									.anyMatch(ga -> Arrays.asList(auth.roles()).contains(ga.getAuthority()));
@@ -314,6 +359,112 @@ public class MGraphQLAutoConfiguration {
 	@Bean
 	UserDetailsServiceImpl loadUserDetailsServiceImpl() {
 		return new UserDetailsServiceImpl();
+	}
+	
+	@Bean
+	PhysicalNamingStrategyStandardImpl physicalNamingStrategyStandard(MMessageBuilder messageBuilder) {
+		return new MPhysicalNamingImpl() {
+
+			private static final long serialVersionUID = -4054141843987604307L;
+			
+			@Override
+			public Identifier apply(Identifier name, JdbcEnvironment context) {
+				if (name != null && name.getCanonicalName().contains("${")) {
+					String message = name.getCanonicalName();
+					message = message.replace("${", "");
+					message = message.replace("}", "");
+					
+					try {
+						message = getMessageSource().getMessage(message, null, Locale.forLanguageTag("pt-BR"));
+						return Identifier.toIdentifier(message, true);
+					} catch (Exception e) {
+
+						Pattern pattern = Pattern.compile("\\b\\w+\\.\\w+\\b");
+						Matcher matcher = pattern.matcher(message);
+
+						while (matcher.find()) {
+							String palavra = matcher.group();
+
+							log.warn("Message not found for {}", palavra);
+
+							messageBuilder.appendText(message, palavra);
+						}
+
+						throw new UnsupportedOperationException(e);
+					}
+					
+				}
+				return name;
+			}
+		};
+	}
+	
+	
+
+	/**
+	 * Implicit.
+	 *
+	 * @return the implicit naming strategy
+	 */
+	@Bean
+	ImplicitNamingStrategy implicit(MMessageBuilder messageBuilder) {
+		return new ImplicitNamingStrategyLegacyJpaImpl() {
+			private static final long serialVersionUID = -5643307972624175002L;
+
+			@Override
+			protected Identifier toIdentifier(String stringForm, MetadataBuildingContext buildingContext) {
+
+				if (Objects.nonNull(stringForm) && stringForm.startsWith("${")) {
+					stringForm = stringForm.replace("${", "");
+					stringForm = stringForm.replace("}", "");
+
+					try {
+						stringForm = getMessageSource().getMessage(stringForm, null, Locale.forLanguageTag("pt-BR"));
+						return super.toIdentifier(stringForm, buildingContext);
+					} catch (Exception e) {
+
+						Pattern pattern = Pattern.compile("\\b\\w+\\.\\w+\\b");
+						Matcher matcher = pattern.matcher(stringForm);
+
+						while (matcher.find()) {
+							String palavra = matcher.group();
+							log.warn("Message not found for {}", palavra);
+							messageBuilder.appendText(stringForm, palavra);
+						}
+						throw new UnsupportedOperationException(e);
+					}
+				}
+
+				return super.toIdentifier(stringForm, buildingContext);
+			}
+
+			@Override
+			protected String transformEntityName(EntityNaming entityNaming) {
+				String entityName = super.transformEntityName(entityNaming);
+				if (Objects.nonNull(entityName) && entityName.startsWith("${")) {
+					entityName = entityName.replace("${", "");
+					entityName = entityName.replace("}", "");
+
+					try {
+						return getMessageSource().getMessage(entityName, null, Locale.forLanguageTag("pt-BR"));
+					} catch (Exception e) {
+
+						Pattern pattern = Pattern.compile("\\b\\w+\\.\\w+\\b");
+						Matcher matcher = pattern.matcher(entityName);
+
+						while (matcher.find()) {
+							String palavra = matcher.group();
+							log.warn("Message not found for {}", palavra);
+							messageBuilder.appendText(entityName, palavra);
+						}
+						throw new UnsupportedOperationException(e);
+					}
+				}
+
+				return entityName;
+			}
+
+		};
 	}
 
 }

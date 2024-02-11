@@ -87,7 +87,6 @@ public class MGraphQLSecurity {
 					FilterChain filterChain) throws ServletException, IOException {
 
 				try {
-					
 					resetAuthenticate();
 					
 					MUser user = jwt.getMUser(request);
@@ -99,7 +98,7 @@ public class MGraphQLSecurity {
 					
 					filterChain.doFilter(request, response);
 				} catch (Exception e) {
-					log.error(e.getMessage(), e);
+					log.debug(e.getMessage(), e);
 					resetAuthenticate();
 					filterChain.doFilter(request, response);
 				}
