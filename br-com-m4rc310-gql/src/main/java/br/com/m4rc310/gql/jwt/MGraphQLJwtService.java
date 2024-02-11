@@ -19,6 +19,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
 
+/**
+ * <p>MGraphQLJwtService class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Data
 public class MGraphQLJwtService {
 
@@ -50,6 +56,12 @@ public class MGraphQLJwtService {
 	private static final String KEY_AUTH = "authorities";
 	
 	
+	/**
+	 * <p>isTokenExpirate.</p>
+	 *
+	 * @param token a {@link java.lang.String} object
+	 * @return a boolean
+	 */
 	public boolean isTokenExpirate(String token) {
 		try {			
 			Date exp = extractClaim(token, Claims::getExpiration);
@@ -59,19 +71,45 @@ public class MGraphQLJwtService {
 		}
 	}
 	
+	/**
+	 * <p>generateToken.</p>
+	 *
+	 * @param user a {@link br.com.m4rc310.gql.dto.MUser} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String generateToken(MUser user) {
 		Map<String, Object> claim = new HashMap<>();
 		return createToken(claim, user);
 	}
 	
+	/**
+	 * <p>extractUsername.</p>
+	 *
+	 * @param token a {@link java.lang.String} object
+	 * @return a {@link java.lang.String} object
+	 */
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
 	
+	/**
+	 * <p>validateToken.</p>
+	 *
+	 * @param token a {@link java.lang.String} object
+	 * @throws java.lang.Exception if any.
+	 */
 	public void validateToken(String token) throws Exception {
 		assertMath(isTokenExpirate(token), "Token expirado!");
 	}
 	
+	/**
+	 * <p>extractClaim.</p>
+	 *
+	 * @param token a {@link java.lang.String} object
+	 * @param resolver a {@link java.util.function.Function} object
+	 * @param <T> a T class
+	 * @return a T object
+	 */
 	public <T> T extractClaim(String token, Function<Claims, T> resolver) {
 		Claims claims =  Jwts.parser().setSigningKey(jwtSigningKey).parseClaimsJws(token).getBody();
 		return resolver.apply(claims);
@@ -98,11 +136,25 @@ public class MGraphQLJwtService {
 		return ret.compact();
 	}
 
+	/**
+	 * <p>loadUserFromToken.</p>
+	 *
+	 * @param token a {@link java.lang.String} object
+	 * @param type a {@link br.com.m4rc310.gql.dto.MEnumToken} object
+	 * @return a {@link br.com.m4rc310.gql.dto.MUser} object
+	 * @throws java.lang.Exception if any.
+	 */
 	public MUser loadUserFromToken(String token, MEnumToken type) throws Exception {
 		return authUserProvider.loadUser(this, type, token);
 //		return null;
 	}
 	
+	/**
+	 * <p>validateUser.</p>
+	 *
+	 * @param user a {@link br.com.m4rc310.gql.dto.MUser} object
+	 * @return a boolean
+	 */
 	public boolean validateUser(MUser user) {
 		return authUserProvider.isValidUser(user);
 	}

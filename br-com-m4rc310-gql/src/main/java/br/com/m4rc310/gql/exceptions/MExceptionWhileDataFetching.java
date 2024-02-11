@@ -14,6 +14,12 @@ import graphql.GraphqlErrorHelper;
 import graphql.execution.ResultPath;
 import graphql.language.SourceLocation;
 
+/**
+ * <p>MExceptionWhileDataFetching class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 public class MExceptionWhileDataFetching implements GraphQLError {
 
     private static final long serialVersionUID = 3489316369045027073L;
@@ -23,6 +29,13 @@ public class MExceptionWhileDataFetching implements GraphQLError {
     private final List<SourceLocation> locations;
     private final Map<String, Object> extensions;
 
+    /**
+     * <p>Constructor for MExceptionWhileDataFetching.</p>
+     *
+     * @param path a {@link graphql.execution.ResultPath} object
+     * @param exception a {@link java.lang.Throwable} object
+     * @param sourceLocation a {@link graphql.language.SourceLocation} object
+     */
     public MExceptionWhileDataFetching(ResultPath path, Throwable exception, SourceLocation sourceLocation) {
         this.path = assertNotNull(path).toList();
         this.exception = assertNotNull(exception);
@@ -52,36 +65,47 @@ public class MExceptionWhileDataFetching implements GraphQLError {
         return extensions;
     }
 
+    /**
+     * <p>Getter for the field <code>exception</code>.</p>
+     *
+     * @return a {@link java.lang.Throwable} object
+     */
     public Throwable getException() {
         return exception;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String getMessage() {
         return message;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<SourceLocation> getLocations() {
         return locations;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<Object> getPath() {
         return path;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Map<String, Object> getExtensions() {
         return extensions;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ErrorType getErrorType() {
         return ErrorType.DataFetchingException;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "ExceptionWhileDataFetching{" +
@@ -91,11 +115,13 @@ public class MExceptionWhileDataFetching implements GraphQLError {
                 '}';
     } 
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         return GraphqlErrorHelper.equals(this, o);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return GraphqlErrorHelper.hashCode(this);

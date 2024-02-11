@@ -22,6 +22,12 @@ import graphql.ErrorType;
 import graphql.ExecutionResult;
 import graphql.GraphQLError;
 
+/**
+ * <p>MMessages class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 public class MMessages {
 
 	/** The Constant CONNECTION_ACK. */
@@ -39,85 +45,85 @@ public class MMessages {
 	 *
 	 * @param message the message
 	 * @return the m message
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws java.io.IOException Signals that an I/O exception has occurred.
 	 */
 	public static MMessage from(TextMessage message) throws IOException{
 		return mapper.readValue(message.getPayload(), MMessage.class);
 	}
 
     /**
-	 * Connection ack.
-	 *
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Connection ack.
+     *
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage connectionAck() throws JsonProcessingException {
         return jsonMessage(CONNECTION_ACK);
     }
 
     /**
-	 * Keep alive.
-	 *
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Keep alive.
+     *
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage keepAlive() throws JsonProcessingException {
         return jsonMessage(KEEP_ALIVE);
     }
     
     /**
-	 * Connection error.
-	 *
-	 * @param message the message
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Connection error.
+     *
+     * @param message the message
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage connectionError(final String message) throws JsonProcessingException {
         return jsonMessage(new MConnectionErrorMessage(Collections.singletonMap("message", message)));
     }
     
     /**
-	 * Connection error.
-	 *
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Connection error.
+     *
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage connectionError() throws JsonProcessingException {
         return connectionError("Invalid message");
     }
 
     
     /**
-	 * Data.
-	 *
-	 * @param id     the id
-	 * @param result the result
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Data.
+     *
+     * @param id     the id
+     * @param result the result
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage data(String id, ExecutionResult result) throws JsonProcessingException {
         return jsonMessage(new MDataMessage(id, result));
     }
 
     /**
-	 * Complete.
-	 *
-	 * @param id the id
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Complete.
+     *
+     * @param id the id
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage complete(String id) throws JsonProcessingException {
         return jsonMessage(new MMessage(id, GQL_COMPLETE));
     }
 
     /**
-	 * Error.
-	 *
-	 * @param id     the id
-	 * @param errors the errors
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Error.
+     *
+     * @param id     the id
+     * @param errors the errors
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage error(String id, List<GraphQLError> errors) throws JsonProcessingException {
         return jsonMessage(new MErrorMessage(id, errors.stream()
                 .filter(error -> !error.getErrorType().equals(ErrorType.DataFetchingException))
@@ -126,25 +132,25 @@ public class MMessages {
     }
 
     /**
-	 * Error.
-	 *
-	 * @param id        the id
-	 * @param exception the exception
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Error.
+     *
+     * @param id        the id
+     * @param exception the exception
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage error(String id, Throwable exception) throws JsonProcessingException {
         return error(id, exception.getMessage());
     }
 
     /**
-	 * Error.
-	 *
-	 * @param id      the id
-	 * @param message the message
-	 * @return the text message
-	 * @throws JsonProcessingException the json processing exception
-	 */
+     * Error.
+     *
+     * @param id      the id
+     * @param message the message
+     * @return the text message
+     * @throws com.fasterxml.jackson.core.JsonProcessingException the json processing exception
+     */
     public static TextMessage error(String id, String message) throws JsonProcessingException {
         return jsonMessage(new MErrorMessage(id, Collections.singletonList(Collections.singletonMap("message", message))));
     }

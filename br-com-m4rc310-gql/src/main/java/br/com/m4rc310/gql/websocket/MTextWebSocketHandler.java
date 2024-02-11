@@ -45,7 +45,12 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
-/** The Constant log. */
+/**
+ * The Constant log.
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 @Import({ MGraphQLJwtService.class })
 public class MTextWebSocketHandler extends TextWebSocketHandler {
@@ -79,10 +84,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * After connection established.
+	 * {@inheritDoc}
 	 *
-	 * @param session the session
-	 * @throws Exception the exception
+	 * After connection established.
 	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -94,10 +98,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * After connection closed.
+	 * {@inheritDoc}
 	 *
-	 * @param session the session
-	 * @param status  the status
+	 * After connection closed.
 	 */
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
@@ -113,11 +116,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * Handle text message.
+	 * {@inheritDoc}
 	 *
-	 * @param session the session
-	 * @param message the message
-	 * @throws Exception the exception
+	 * Handle text message.
 	 */
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -253,10 +254,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	}
 
 	/**
-	 * Handle transport error.
+	 * {@inheritDoc}
 	 *
-	 * @param session   the session
-	 * @param exception the exception
+	 * Handle transport error.
 	 */
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) {

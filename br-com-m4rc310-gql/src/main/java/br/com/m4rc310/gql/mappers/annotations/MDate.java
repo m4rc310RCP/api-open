@@ -7,6 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface MDate.
+ *
+ * @author marcelo
+ * @version $Id: $Id
  */
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

@@ -9,6 +9,12 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * <p>MService class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Configuration
 
 public class MService {
@@ -16,6 +22,12 @@ public class MService {
 	@Autowired
 	protected MFluxService flux;
 
+	/**
+	 * <p>convertStreamToString.</p>
+	 *
+	 * @param is a {@link java.io.InputStream} object
+	 * @return a {@link java.lang.String} object
+	 */
 	protected static String convertStreamToString(InputStream is) {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -38,6 +50,12 @@ public class MService {
 		return sb.toString();
 	}
 
+	/**
+	 * <p>unixTimeStampToDate.</p>
+	 *
+	 * @param timeStamp a {@link java.lang.Long} object
+	 * @return a {@link java.util.Date} object
+	 */
 	protected Date unixTimeStampToDate(Long timeStamp) {
 		timeStamp = timeStamp * 1000;
 		return new Date(timeStamp);

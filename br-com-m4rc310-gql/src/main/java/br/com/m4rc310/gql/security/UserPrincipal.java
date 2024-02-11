@@ -10,6 +10,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import br.com.m4rc310.gql.dto.MUser;
 import lombok.Data;
 
+/**
+ * <p>UserPrincipal class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Data
 public class UserPrincipal {
 	
@@ -17,6 +23,11 @@ public class UserPrincipal {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 	
+	/**
+	 * <p>Constructor for UserPrincipal.</p>
+	 *
+	 * @param user a {@link br.com.m4rc310.gql.dto.MUser} object
+	 */
 	public UserPrincipal(MUser user) {
 		this.username = user.getUsername();
 		this.password = user.getPassword();
@@ -27,6 +38,12 @@ public class UserPrincipal {
 		}
 	}
 	
+	/**
+	 * <p>create.</p>
+	 *
+	 * @param user a {@link br.com.m4rc310.gql.dto.MUser} object
+	 * @return a {@link br.com.m4rc310.gql.security.UserPrincipal} object
+	 */
 	public static UserPrincipal create(MUser user){
         return new UserPrincipal(user);
     }

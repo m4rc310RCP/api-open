@@ -21,6 +21,8 @@ import io.leangen.graphql.generator.mapping.TypeMappingEnvironment;
  * The Class MGraphQLScalarType.
  *
  * @param <T> the generic type
+ * @author marcelo
+ * @version $Id: $Id
  */
 public abstract class MGraphQLScalarType<T extends Annotation> implements TypeMapper{
 	
@@ -32,12 +34,9 @@ public abstract class MGraphQLScalarType<T extends Annotation> implements TypeMa
 	
 
 	/**
-	 * To graph QL type.
+	 * {@inheritDoc}
 	 *
-	 * @param javaType      the java type
-	 * @param mappersToSkip the mappers to skip
-	 * @param env           the env
-	 * @return the graph QL output type
+	 * To graph QL type.
 	 */
 	@Override
 	public GraphQLOutputType toGraphQLType(AnnotatedType javaType, Set<Class<? extends TypeMapper>> mappersToSkip,
@@ -46,12 +45,9 @@ public abstract class MGraphQLScalarType<T extends Annotation> implements TypeMa
 	}
 
 	/**
-	 * To graph QL input type.
+	 * {@inheritDoc}
 	 *
-	 * @param javaType      the java type
-	 * @param mappersToSkip the mappers to skip
-	 * @param env           the env
-	 * @return the graph QL input type
+	 * To graph QL input type.
 	 */
 	@Override
 	public GraphQLInputType toGraphQLInputType(AnnotatedType javaType, Set<Class<? extends TypeMapper>> mappersToSkip,
@@ -60,11 +56,9 @@ public abstract class MGraphQLScalarType<T extends Annotation> implements TypeMa
 	}
 
 	/**
-	 * Supports.
+	 * {@inheritDoc}
 	 *
-	 * @param element the element
-	 * @param type    the type
-	 * @return true, if successful
+	 * Supports.
 	 */
 	@Override
 	public boolean supports(AnnotatedElement element, AnnotatedType type) {

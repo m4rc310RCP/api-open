@@ -29,7 +29,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
-/** The Constant log. */
+/**
+ * The Constant log.
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 @Configuration
 public class MGraphQLSecurity {
@@ -64,7 +69,7 @@ public class MGraphQLSecurity {
 	 * @param jwt              the jwt
 	 * @param authUserProvider the auth user provider
 	 * @return the security filter chain
-	 * @throws Exception the exception
+	 * @throws java.lang.Exception the exception
 	 */
 	public SecurityFilterChain getSecurityFilterChain(HttpSecurity http, MGraphQLJwtService jwt,
 			IMAuthUserProvider authUserProvider) throws Exception {

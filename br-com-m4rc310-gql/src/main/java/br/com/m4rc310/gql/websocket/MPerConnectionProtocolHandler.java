@@ -17,6 +17,12 @@ import io.leangen.graphql.spqr.spring.web.mvc.websocket.GraphQLWebSocketExecutor
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <p>MPerConnectionProtocolHandler class.</p>
+ *
+ * @author marcelo
+ * @version $Id: $Id
+ */
 @Slf4j
 public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 	private final GraphQL graphQL;
@@ -28,6 +34,17 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 	private final Map<WebSocketSession, HandlerProxy> handlers;
 	private final MGraphQLJwtService jwtService;
 
+	/**
+	 * <p>Constructor for MPerConnectionProtocolHandler.</p>
+	 *
+	 * @param graphQL a {@link graphql.GraphQL} object
+	 * @param executor a {@link io.leangen.graphql.spqr.spring.web.mvc.websocket.GraphQLWebSocketExecutor} object
+	 * @param taskScheduler a {@link org.springframework.scheduling.TaskScheduler} object
+	 * @param keepAliveInterval a int
+	 * @param sendTimeLimit a int
+	 * @param sendBufferSizeLimit a int
+	 * @param jwtService a {@link br.com.m4rc310.gql.jwt.MGraphQLJwtService} object
+	 */
 	public MPerConnectionProtocolHandler(GraphQL graphQL, GraphQLWebSocketExecutor executor,
 			TaskScheduler taskScheduler, int keepAliveInterval, int sendTimeLimit, int sendBufferSizeLimit,
 			MGraphQLJwtService jwtService) {
@@ -43,6 +60,7 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 		this.jwtService = jwtService;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		MTextWebSocketHandler handler = new MTextWebSocketHandler(graphQL, executor, taskScheduler, keepAliveInterval,
@@ -53,16 +71,19 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 		proxy.afterConnectionEstablished();
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 		getHandler(session).handleMessage(message);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) {
 		getHandler(session).handleTransportError(exception);
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
 		try {
@@ -72,11 +93,15 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 		}
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public boolean supportsPartialMessages() {
 		return false;
 	}
 
+	/**
+	 * <p>cancelAll.</p>
+	 */
 	@PreDestroy
 	public void cancelAll() {
 		this.handlers.forEach((session, handler) -> {
@@ -88,6 +113,7 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 		});
 	}
 
+	/** {@inheritDoc} */
 	protected WebSocketSession decorateSession(WebSocketSession session) {
 		return new ConcurrentWebSocketSessionDecorator(session, sendTimeLimit, sendBufferSizeLimit);
 	}

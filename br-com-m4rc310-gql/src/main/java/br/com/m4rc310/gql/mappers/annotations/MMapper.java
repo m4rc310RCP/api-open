@@ -10,6 +10,9 @@ import java.lang.annotation.Target;
 
 /**
  * The Interface MMapper.
+ *
+ * @author marcelo
+ * @version $Id: $Id
  */
 @Retention(RUNTIME)
 @Target({ TYPE, TYPE_PARAMETER, TYPE_USE })
