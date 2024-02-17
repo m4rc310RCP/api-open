@@ -15,6 +15,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 
 import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
+import br.com.m4rc310.gql.security.MGraphQLSecurity;
 import br.com.m4rc310.gql.websocket.MPerConnectionProtocolHandler;
 import graphql.GraphQL;
 import io.leangen.graphql.spqr.spring.autoconfigure.DataLoaderRegistryFactory;
@@ -44,6 +45,9 @@ public class MGraphQLWsAutoConfiguration extends WebSocketAutoConfiguration  {
 	
 	@Autowired
 	private MGraphQLJwtService jwtService;
+	
+	@Autowired
+	private MGraphQLSecurity security;
 
 	/**
 	 * <p>Constructor for MGraphQLWsAutoConfiguration.</p>
@@ -75,7 +79,7 @@ public class MGraphQLWsAutoConfiguration extends WebSocketAutoConfiguration  {
 		int sendBufferSizeLimit = config.getWs().getSendBufferSizeLimit();
 		
 		return new MPerConnectionProtocolHandler(graphQL, executor, keepAliveEnabled ? defaultTaskScheduler() : null,
-				keepAliveInterval, sendTimeLimit, sendBufferSizeLimit, jwtService);
+				keepAliveInterval, sendTimeLimit, sendBufferSizeLimit, jwtService, security);
 	}
 	
 	private TaskScheduler defaultTaskScheduler() {

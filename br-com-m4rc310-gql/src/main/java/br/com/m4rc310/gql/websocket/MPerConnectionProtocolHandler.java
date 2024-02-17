@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
 
 import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
+import br.com.m4rc310.gql.security.MGraphQLSecurity;
 import graphql.GraphQL;
 import io.leangen.graphql.spqr.spring.web.apollo.PerConnectionApolloHandler;
 import io.leangen.graphql.spqr.spring.web.mvc.websocket.GraphQLWebSocketExecutor;
@@ -33,6 +34,7 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 	private final int sendBufferSizeLimit;
 	private final Map<WebSocketSession, HandlerProxy> handlers;
 	private final MGraphQLJwtService jwtService;
+	private MGraphQLSecurity security;
 
 	/**
 	 * <p>Constructor for MPerConnectionProtocolHandler.</p>
@@ -47,7 +49,7 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 	 */
 	public MPerConnectionProtocolHandler(GraphQL graphQL, GraphQLWebSocketExecutor executor,
 			TaskScheduler taskScheduler, int keepAliveInterval, int sendTimeLimit, int sendBufferSizeLimit,
-			MGraphQLJwtService jwtService) {
+			MGraphQLJwtService jwtService, MGraphQLSecurity security) {
 		super(graphQL, executor, taskScheduler, keepAliveInterval, sendTimeLimit, sendBufferSizeLimit);
 
 		this.graphQL = graphQL;
@@ -58,13 +60,14 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 		this.sendBufferSizeLimit = sendBufferSizeLimit;
 		this.handlers = new ConcurrentHashMap<>();
 		this.jwtService = jwtService;
+		this.security = security;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		MTextWebSocketHandler handler = new MTextWebSocketHandler(graphQL, executor, taskScheduler, keepAliveInterval,
-				jwtService);
+				jwtService, security);
 		HandlerProxy proxy = new HandlerProxy(handler, decorateSession(session));
 
 		this.handlers.put(session, proxy);

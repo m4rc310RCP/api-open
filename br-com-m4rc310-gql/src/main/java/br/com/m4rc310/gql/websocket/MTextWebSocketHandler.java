@@ -33,6 +33,7 @@ import br.com.m4rc310.gql.dto.messages.MMessage.MStartMessage;
 import br.com.m4rc310.gql.dto.messages.MMessages;
 import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 import br.com.m4rc310.gql.security.MGraphQLSecurity;
+import br.com.m4rc310.gql.services.MFluxService;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import io.leangen.graphql.spqr.spring.web.apollo.ApolloMessages;
@@ -61,9 +62,12 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	private final Map<String, Disposable> subscriptions = new ConcurrentHashMap<>();
 	private final AtomicReference<ScheduledFuture<?>> keepAlive = new AtomicReference<>();
 
+	@Autowired
+	private MFluxService flux;
+
 	private MGraphQLJwtService jwtService;
-	
-	@Autowired 
+
+//	@Autowired 
 	private MGraphQLSecurity security;
 
 	/**
@@ -76,12 +80,13 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	 * @param jwtService        the jwt service
 	 */
 	public MTextWebSocketHandler(GraphQL graphQL, GraphQLWebSocketExecutor executor, TaskScheduler taskScheduler,
-			int keepAliveInterval, MGraphQLJwtService jwtService) {
+			int keepAliveInterval, MGraphQLJwtService jwtService, MGraphQLSecurity security) {
 		this.graphQL = graphQL;
 		this.executor = executor;
 		this.taskScheduler = taskScheduler;
 		this.keepAliveInterval = keepAliveInterval;
 		this.jwtService = jwtService;
+		this.security = security;
 	}
 
 	/**
@@ -98,7 +103,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 *
@@ -133,15 +137,15 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 				e.printStackTrace();
 				return;
 			}
-			
-			log.info("keepalive: {}", keepAliveInterval);
 
 			switch (mmessage.getType()) {
 			case GQL_CONNECTION_INIT:
 				try {
 					MUser user = fromPayload(message.getPayload());
+
+					log.info("User: {}", user);
 					if (jwtService.validateUser(user)) {
-						//SecurityContextHolder.getContext().setAuthentication(new MAuthToken(user));
+						// SecurityContextHolder.getContext().setAuthentication(new MAuthToken(user));
 						security.authenticate(user);
 						session.sendMessage(MMessages.connectionAck());
 						if (taskScheduler != null) {
@@ -151,6 +155,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 						throw new Exception("Error connection");
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					security.resetAuthenticate();
 					fatalError(session, e);
 				}
@@ -207,15 +212,14 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 		String token = (String) mpay.get("Authorization");
 		token = token.trim();
-		
-		for(MEnumToken type : MEnumToken.values()) {
+
+		for (MEnumToken type : MEnumToken.values()) {
 			if (token.startsWith(type.getDescription())) {
 				token = token.replace(type.getDescription(), "").trim();
 				return jwtService.getMUser(type, token);
 			}
 		}
-		
-		
+
 //
 //		if (token.startsWith(TEST) && jwtService.isDev()) {
 //			token = token.replace(TEST, "").trim();
@@ -332,7 +336,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 			subscriptions.clear();
 		}
 	}
-	
 
 	/**
 	 * Fatal error.

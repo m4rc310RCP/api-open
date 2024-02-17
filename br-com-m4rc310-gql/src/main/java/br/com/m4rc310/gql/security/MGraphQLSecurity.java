@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContext;
@@ -31,8 +33,8 @@ import lombok.extern.slf4j.Slf4j;
  * @version $Id: $Id
  */
 @Slf4j
-//@Configuration
-//@EnableWebSecurity
+@Configuration
+@EnableWebSecurity
 public class MGraphQLSecurity {
 
 	@Value("${br.com.m4rc310.gql.security.enable:false}")
@@ -119,7 +121,6 @@ public class MGraphQLSecurity {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(authentication);
 		SecurityContextHolder.setContext(context);
-
 		flux.setUser(user);
 	}
 
