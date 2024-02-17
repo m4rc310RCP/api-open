@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -22,15 +22,16 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
 
 import br.com.m4rc310.gql.annotations.MConstants;
-import br.com.m4rc310.gql.mappers.annotations.MMapper;
-import io.leangen.graphql.generator.mapping.TypeMapper;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <p>MMessageBuilder class.</p>
+ * <p>
+ * MMessageBuilder class.
+ * </p>
  *
  * @author marcelo
  * @version $Id: $Id
@@ -44,19 +45,14 @@ public class MMessageBuilder {
 	/** The lv. */
 	private int lv = 0;
 
-	@Value("${br.com.m4rc310.gql.path}")
-	private String constPath;
-	
-	/** The classname. */
-	@Value("${br.com.m4rc310.gql.classname:br.com.m4rc310.auth.constants.MConst}")
-	private String classname;
-
 	/** The message source. */
 	@Autowired
 	private MessageSource messageSource;
 
 	/**
-	 * <p>Constructor for MMessageBuilder.</p>
+	 * <p>
+	 * Constructor for MMessageBuilder.
+	 * </p>
 	 */
 	public MMessageBuilder() {
 	}
@@ -118,7 +114,8 @@ public class MMessageBuilder {
 	 */
 	public void fixUnknowMessages() {
 
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(
+				getClass().getClassLoader());
 
 		try {
 			Resource[] resources = resolver.getResources("classpath:messages/**/*.properties");
@@ -216,70 +213,77 @@ public class MMessageBuilder {
 					}
 				}
 
-				log.info(">> {}", classname);
-				
-				final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
-				provider.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*")));
-				
+				final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(
+						false) {
+					@Override
+					protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
+						return super.isCandidateComponent(beanDefinition) || beanDefinition.getMetadata().isAbstract();
+					}
+				};
+				//provider.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*")));
+				provider.addIncludeFilter(new AnnotationTypeFilter(MConstants.class, true, true));
+
 				final Set<BeanDefinition> classes = provider.findCandidateComponents("br");
+				
+				if(classes.isEmpty()) {
+					log.info("\n**** ATENTION ***\nCreate a interface annotated with br.com.m4rc310.gql.annotations.MConstants");
+				}
+				
 				for (BeanDefinition bean : classes) {
-					Class<?> clazz = Class.forName(bean.getBeanClassName());
-					if (clazz.isAnnotationPresent(MConstants.class)) {
-//						Constructor<?> constructor = clazz.getDeclaredConstructor();
-//						TypeMapper mapper = (TypeMapper) constructor.newInstance();
-//						defaults.prepend(mapper);
-//						log.info("~~> Prepend mapper: {}", mapper);
+					Class<?> type = Class.forName(bean.getBeanClassName());
+					sb2.setLength(0);
+
+					String saux = String.format("package %s;\n\n\n", type.getPackage().getName());
+					sb2.append(saux);
+					
+					saux = String.format("import br.com.m4rc310.gql.annotations.MConstants;\n\n");
+					sb2.append(saux);
+					
+					saux = String.format("@MConstants\n");
+					sb2.append(saux);
+					
+					
+					saux = String.format("public interface %s {\n", type.getSimpleName());
+					sb2.append(saux);
+					
+					for (String key : maps.keySet()) {
+						String skey = key.toUpperCase();
+						Map<String, String> map = maps.get(key);
 						
-						log.info(clazz.getName());
+						if ("DESC".equalsIgnoreCase(skey)) {
+							// continue;
+						}
 						
+						map.forEach((k, v) -> {
+							String variable = String.format("	public static final String %s$%s", skey,
+									k.replace(key + ".", "").replace(".", "_"));
+							int rest = lv - variable.length();
+							String sp = rest > 0 ? " ".repeat(rest) : "";
+							
+							String fieldName = String.format("%s%s = \"${%s}\";", variable, sp, k);
+							sb2.append(fieldName).append("\n");
+						});
 					}
-				}
-				
-				
-
-				Class<?> type = Class.forName(classname);
-				String saux = String.format("package %s;\n\n\n", type.getPackage().getName());
-
-				sb2.append(saux);
-				saux = String.format("public interface %s {\n", type.getSimpleName());
-
-				sb2.append(saux);
-
-				for (String key : maps.keySet()) {
-					String skey = key.toUpperCase();
-					Map<String, String> map = maps.get(key);
-
-					if ("DESC".equalsIgnoreCase(skey)) {
-						// continue;
+					
+					sb2.append("}\n");
+					
+					String spath = String.format("src/main/java/%s/%s.java", type.getPackageName().replace(".", "/"), type.getSimpleName());
+					
+					file = new File(spath);
+					if (file.exists()) {
+						file.delete();
 					}
-
-					map.forEach((k, v) -> {
-						String variable = String.format("	public static final String %s$%s", skey,
-								k.replace(key + ".", "").replace(".", "_"));
-						int rest = lv - variable.length();
-						String sp = rest > 0 ? " ".repeat(rest) : "";
-
-						String fieldName = String.format("%s%s = \"${%s}\";", variable, sp, k);
-						sb2.append(fieldName).append("\n");
-					});
+					file.createNewFile();
+					
+					try (BufferedWriter bufferedWriter = new BufferedWriter(
+							new OutputStreamWriter(new FileOutputStream(file), "ISO-8859-1"))) {
+						bufferedWriter.write(sb2.toString());
+						bufferedWriter.newLine();
+						bufferedWriter.flush();
+					}
+					///					log.info("8-> {}", clazz.getResource(clazz.getSimpleName() + ".java").getPath());
 				}
 
-				sb2.append("}\n");
-
-				String spath = String.format("%s/MConst.java", constPath);
-
-				file = new File(spath);
-				if (file.exists()) {
-					file.delete();
-				}
-				file.createNewFile();
-
-				try (BufferedWriter bufferedWriter = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream(file), "ISO-8859-1"))) {
-					bufferedWriter.write(sb2.toString());
-					bufferedWriter.newLine();
-					bufferedWriter.flush();
-				}
 
 			}
 		} catch (Exception e) {

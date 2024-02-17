@@ -63,7 +63,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 	private MGraphQLJwtService jwtService;
 	
-	@Autowired
+	@Autowired 
 	private MGraphQLSecurity security;
 
 	/**

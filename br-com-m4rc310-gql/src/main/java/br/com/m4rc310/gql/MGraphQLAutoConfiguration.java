@@ -1,16 +1,11 @@
 package br.com.m4rc310.gql;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +30,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.annotation.Order;
@@ -75,7 +71,6 @@ import graphql.language.SourceLocation;
 import graphql.schema.GraphQLSchema;
 import io.leangen.graphql.ExtensionProvider;
 import io.leangen.graphql.GeneratorConfiguration;
-import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.execution.InvocationContext;
 import io.leangen.graphql.execution.ResolverInterceptor;
 import io.leangen.graphql.execution.ResolverInterceptorFactory;
@@ -381,6 +376,7 @@ public class MGraphQLAutoConfiguration {
 	}
 
 	@Bean
+	@Primary
 	MGraphQLSecurity loadMGraphQLSecurity() {
 		return new MGraphQLSecurity();
 	}

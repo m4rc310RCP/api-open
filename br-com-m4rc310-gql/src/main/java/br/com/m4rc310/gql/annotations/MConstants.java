@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @author marcelo
  * @version $Id: $Id
  */
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MConstants {
 }
