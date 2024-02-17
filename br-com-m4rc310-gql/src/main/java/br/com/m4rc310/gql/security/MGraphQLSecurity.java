@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContext;
@@ -33,8 +31,8 @@ import lombok.extern.slf4j.Slf4j;
  * @version $Id: $Id
  */
 @Slf4j
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 public class MGraphQLSecurity {
 
 	@Value("${br.com.m4rc310.gql.security.enable:false}")
@@ -45,7 +43,6 @@ public class MGraphQLSecurity {
 
 	private final OncePerRequestFilter jwtAuthFilter = getJWTFilter();
 
-
 	private MGraphQLJwtService jwt;
 
 	private MFluxService flux;
@@ -55,6 +52,8 @@ public class MGraphQLSecurity {
 
 		this.jwt = jwt;
 		this.flux = flux;
+		
+		log.debug("enableSecurity -> {}", enableSecurity);
 
 		if (!enableSecurity) {
 			http = http.cors(AbstractHttpConfigurer::disable);
@@ -67,6 +66,7 @@ public class MGraphQLSecurity {
 		http = http.cors(AbstractHttpConfigurer::disable);
 		http = http.csrf(AbstractHttpConfigurer::disable);
 		http = http.anonymous(AbstractHttpConfigurer::disable);
+		http = http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http = http.securityContext(c -> c.requireExplicitSave(false));
 		http = http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		http = http.authorizeHttpRequests(auth -> {
@@ -74,6 +74,8 @@ public class MGraphQLSecurity {
 			auth.requestMatchers(HttpMethod.POST, "/graphql/**").authenticated();
 			auth.anyRequest().denyAll();
 		});
+		
+		log.debug("getSecurityFilterChain -> {}", http);
 
 		return http.build();
 
@@ -87,15 +89,17 @@ public class MGraphQLSecurity {
 					FilterChain filterChain) throws ServletException, IOException {
 
 				try {
-					resetAuthenticate();
 					
+					resetAuthenticate();
+
 					MUser user = jwt.getMUser(request);
+					
 					if (Objects.isNull(user)) {
 						throw new Exception("User not found.");
 					}
-					
+
 					authenticate(user);
-					
+
 					filterChain.doFilter(request, response);
 				} catch (Exception e) {
 					log.debug(e.getMessage(), e);
@@ -108,20 +112,20 @@ public class MGraphQLSecurity {
 
 	public void authenticate(MUser user) {
 		UserPrincipal principal = UserPrincipal.create(user);
-		
-		UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-		
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-        
-        flux.setUser(user);
+
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null,
+				principal.getAuthorities());
+
+		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		context.setAuthentication(authentication);
+		SecurityContextHolder.setContext(context);
+
+		flux.setUser(user);
 	}
-	
+
 	public void resetAuthenticate() {
-        flux.setUser(null);
-        SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
+		flux.setUser(null);
+		SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
 	}
 
 //	@Bean

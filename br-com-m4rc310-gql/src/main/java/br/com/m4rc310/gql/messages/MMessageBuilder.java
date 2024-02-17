@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -23,7 +22,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.core.type.filter.RegexPatternTypeFilter;
 
 import br.com.m4rc310.gql.annotations.MConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -231,6 +229,11 @@ public class MMessageBuilder {
 				
 				for (BeanDefinition bean : classes) {
 					Class<?> type = Class.forName(bean.getBeanClassName());
+					if (!type.isInterface()) {
+						log.debug("No interface, {}", type);
+						continue;
+					}
+					
 					sb2.setLength(0);
 
 					String saux = String.format("package %s;\n\n\n", type.getPackage().getName());

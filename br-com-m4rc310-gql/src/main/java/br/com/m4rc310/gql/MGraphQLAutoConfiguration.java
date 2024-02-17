@@ -376,7 +376,6 @@ public class MGraphQLAutoConfiguration {
 	}
 
 	@Bean
-	@Primary
 	MGraphQLSecurity loadMGraphQLSecurity() {
 		return new MGraphQLSecurity();
 	}

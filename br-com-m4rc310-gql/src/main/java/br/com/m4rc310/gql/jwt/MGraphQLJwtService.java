@@ -12,6 +12,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>MGraphQLJwtService class.</p>
@@ -34,6 +36,7 @@ import lombok.Data;
  * @version $Id: $Id
  */
 @Data
+@Slf4j
 public class MGraphQLJwtService {
 
 	@Value("${AUTH_SECURITY_SIGNING}")
@@ -185,6 +188,7 @@ public class MGraphQLJwtService {
 	private MEnumToken getMEnumToken(HttpServletRequest request) {
 
 		String authorizationHeader = request.getHeader(AUTHORIZATION);
+		
 		if (authorizationHeader == null) {
 			return MEnumToken.NONE;
 		}
@@ -203,6 +207,7 @@ public class MGraphQLJwtService {
 	private String getToken(HttpServletRequest request) {
 
 		MEnumToken type = getMEnumToken(request);
+		
 		if (type.compareTo(MEnumToken.NONE) == 0) {
 			return null;
 		}
@@ -238,6 +243,7 @@ public class MGraphQLJwtService {
 
 	public MUser getMUser(HttpServletRequest request) throws Exception {
 		String token = getToken(request);
+		
 		MEnumToken type = getMEnumToken(request);
 		return getMUser(type, token);
 	}
@@ -318,10 +324,6 @@ public class MGraphQLJwtService {
 	 */
 	public byte[] getKeyByte(String skey) throws Exception {
 		jwtSigningKey = skey;
-		//jwtSalt = "m4rc310";
-		//iterationCount = 10000;
-		//keyLength = 128;
-
 		PBEKeySpec spec = new PBEKeySpec(jwtSigningKey.toCharArray(), jwtSalt.getBytes(), iterationCount, keyLength);
 		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
 		return factory.generateSecret(spec).getEncoded();
