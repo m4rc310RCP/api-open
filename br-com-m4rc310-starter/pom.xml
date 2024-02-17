@@ -24,6 +24,11 @@
 			<artifactId>br-com-m4rc310-gql</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>br.com.m4rc310</groupId>
+			<artifactId>br-com-m4rc310-weather</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>

@@ -1,11 +1,16 @@
 package br.com.m4rc310.gql;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -70,6 +75,7 @@ import graphql.language.SourceLocation;
 import graphql.schema.GraphQLSchema;
 import io.leangen.graphql.ExtensionProvider;
 import io.leangen.graphql.GeneratorConfiguration;
+import io.leangen.graphql.annotations.GraphQLQuery;
 import io.leangen.graphql.execution.InvocationContext;
 import io.leangen.graphql.execution.ResolverInterceptor;
 import io.leangen.graphql.execution.ResolverInterceptorFactory;
@@ -79,7 +85,9 @@ import io.leangen.graphql.spqr.spring.util.GlobalResolverInterceptorFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <p>MGraphQLAutoConfiguration class.</p>
+ * <p>
+ * MGraphQLAutoConfiguration class.
+ * </p>
  *
  * @author marcelo
  * @version $Id: $Id
@@ -118,7 +126,7 @@ public class MGraphQLAutoConfiguration {
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		if(provider != null) {
+		if (provider != null) {
 			provider.setEncoder(encoder);
 		}
 		return encoder;
@@ -145,7 +153,7 @@ public class MGraphQLAutoConfiguration {
 	}
 
 	/**
-
+	 * 
 	 * <p>
 	 * getString.
 	 * </p>
@@ -178,7 +186,7 @@ public class MGraphQLAutoConfiguration {
 			return ret;
 		}
 	}
-	
+
 	/**
 	 * Load message.
 	 *
@@ -192,7 +200,6 @@ public class MGraphQLAutoConfiguration {
 		}
 		return message;
 	}
-
 
 	@Component
 	public class MApplicationListener implements ApplicationListener<ApplicationReadyEvent> {
@@ -239,8 +246,6 @@ public class MGraphQLAutoConfiguration {
 		return builder.build();
 	}
 
-
-
 	@Bean
 	ExtensionProvider<GeneratorConfiguration, TypeMapper> pageableInputField() {
 		log.info("~> Starting '{}'...", "Custom Mappers");
@@ -261,6 +266,19 @@ public class MGraphQLAutoConfiguration {
 						defaults.prepend(mapper);
 						log.info("~~> Prepend mapper: {}", mapper);
 					}
+
+//					// ---------------------------------------------------------------------------
+
+//					Method[] methods = clazz.getDeclaredMethods();
+//					for (Method method : methods) {
+//						if (method.isAnnotationPresent(GraphQLQuery.class)) {
+//							GraphQLQuery query = method.getAnnotation(GraphQLQuery.class);
+////							changeAnnotationValue(query, "description", "----");
+//						}
+//					}
+//							GraphQLQuery newQueryAnnotation = new GraphQLQuery() {
+//							
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -269,6 +287,30 @@ public class MGraphQLAutoConfiguration {
 			return defaults;
 		};
 	}
+
+//	@SuppressWarnings("unchecked")
+//	public static Object changeAnnotationValue(Annotation annotation, String key, Object newValue) {
+//		Object handler = Proxy.getInvocationHandler(annotation);
+//		Field f;
+//		try {
+//			f = handler.getClass().getDeclaredField("memberValues");
+//		} catch (NoSuchFieldException | SecurityException e) {
+//			throw new IllegalStateException(e);
+//		}
+//		f.setAccessible(true);
+//		Map<String, Object> memberValues;
+//		try {
+//			memberValues = (Map<String, Object>) f.get(handler);
+//		} catch (IllegalArgumentException | IllegalAccessException e) {
+//			throw new IllegalStateException(e);
+//		}
+//		Object oldValue = memberValues.get(key);
+//		if (oldValue == null || oldValue.getClass() != newValue.getClass()) {
+//			throw new IllegalArgumentException();
+//		}
+//		memberValues.put(key, newValue);
+//		return oldValue;
+//	}
 
 //	@Bean
 //	GraphQLSchema graphQLSchema(GraphQLSchemaGenerator schemaGenerator) {
@@ -292,25 +334,24 @@ public class MGraphQLAutoConfiguration {
 		public Object aroundInvoke(InvocationContext context, Continuation continuation) throws Exception {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			if (Objects.nonNull(authentication)) {
-				
+
 				UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 				boolean isBasic = principal == null ? false
 						: principal.getAuthorities().stream()
-						.anyMatch(ga -> "basic".equalsIgnoreCase(ga.getAuthority()));
-				
-				
+								.anyMatch(ga -> "basic".equalsIgnoreCase(ga.getAuthority()));
+
 				MAuth auth = context.getResolver().getExecutable().getDelegate().getAnnotation(MAuth.class);
 				if (Objects.isNull(auth) && isBasic) {
 					throw getWebException(401, "Access unauthorizade. User with basic privileges!");
 				}
-				
+
 				if (Objects.nonNull(auth)) {
 					if (isBasic) {
 						if (!Arrays.asList(auth.roles()).contains("basic")) {
 							throw getWebException(401, "Access unauthorizade. User with basic privileges!");
 						}
 					}
-					
+
 					boolean isAuth = principal == null ? false
 							: principal.getAuthorities().stream()
 									.anyMatch(ga -> Arrays.asList(auth.roles()).contains(ga.getAuthority()));
@@ -359,20 +400,20 @@ public class MGraphQLAutoConfiguration {
 	UserDetailsServiceImpl loadUserDetailsServiceImpl() {
 		return new UserDetailsServiceImpl();
 	}
-	
+
 	@Bean
 	PhysicalNamingStrategyStandardImpl physicalNamingStrategyStandard(MMessageBuilder messageBuilder) {
 		return new MPhysicalNamingImpl() {
 
 			private static final long serialVersionUID = -4054141843987604307L;
-			
+
 			@Override
 			public Identifier apply(Identifier name, JdbcEnvironment context) {
 				if (name != null && name.getCanonicalName().contains("${")) {
 					String message = name.getCanonicalName();
 					message = message.replace("${", "");
 					message = message.replace("}", "");
-					
+
 					try {
 						message = getMessageSource().getMessage(message, null, Locale.forLanguageTag("pt-BR"));
 						return Identifier.toIdentifier(message, true);
@@ -391,14 +432,12 @@ public class MGraphQLAutoConfiguration {
 
 						throw new UnsupportedOperationException(e);
 					}
-					
+
 				}
 				return name;
 			}
 		};
 	}
-	
-	
 
 	/**
 	 * Implicit.

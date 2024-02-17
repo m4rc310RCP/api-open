@@ -4,21 +4,29 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.core.type.filter.RegexPatternTypeFilter;
 
+import br.com.m4rc310.gql.annotations.MConstants;
+import br.com.m4rc310.gql.mappers.annotations.MMapper;
+import io.leangen.graphql.generator.mapping.TypeMapper;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -209,6 +217,25 @@ public class MMessageBuilder {
 				}
 
 				log.info(">> {}", classname);
+				
+				final ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+				provider.addIncludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*")));
+				
+				final Set<BeanDefinition> classes = provider.findCandidateComponents("br");
+				for (BeanDefinition bean : classes) {
+					Class<?> clazz = Class.forName(bean.getBeanClassName());
+					if (clazz.isAnnotationPresent(MConstants.class)) {
+//						Constructor<?> constructor = clazz.getDeclaredConstructor();
+//						TypeMapper mapper = (TypeMapper) constructor.newInstance();
+//						defaults.prepend(mapper);
+//						log.info("~~> Prepend mapper: {}", mapper);
+						
+						log.info(clazz.getName());
+						
+					}
+				}
+				
+				
 
 				Class<?> type = Class.forName(classname);
 				String saux = String.format("package %s;\n\n\n", type.getPackage().getName());

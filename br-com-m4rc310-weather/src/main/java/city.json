@@ -1,0 +1,40 @@
+{
+    "id": 4104303,
+    "nome": "Campo Mourão",
+    "microrregiao": {
+        "id": 41005,
+        "nome": "Campo Mourão",
+        "mesorregiao": {
+            "id": 4102,
+            "nome": "Centro Ocidental Paranaense",
+            "UF": {
+                "id": 41,
+                "sigla": "PR",
+                "nome": "Paraná",
+                "regiao": {
+                    "id": 4,
+                    "sigla": "S",
+                    "nome": "Sul"
+                }
+            }
+        }
+    },
+    "regiao-imediata": {
+        "id": 410015,
+        "nome": "Campo Mourão",
+        "regiao-intermediaria": {
+            "id": 4104,
+            "nome": "Maringá",
+            "UF": {
+                "id": 41,
+                "sigla": "PR",
+                "nome": "Paraná",
+                "regiao": {
+                    "id": 4,
+                    "sigla": "S",
+                    "nome": "Sul"
+                }
+            }
+        }
+    }
+}
