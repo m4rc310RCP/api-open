@@ -100,7 +100,6 @@ public class MWeatherService {
 		connection.setRequestProperty("accept", "application/json");
 
 		InputStream responseStream = connection.getInputStream();
-		ObjectMapper mapper = new ObjectMapper();
 		return new String(responseStream.readAllBytes(), StandardCharsets.UTF_8);
 	}
 

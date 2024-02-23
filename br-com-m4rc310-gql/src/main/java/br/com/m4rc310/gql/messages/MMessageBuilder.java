@@ -205,6 +205,7 @@ public class MMessageBuilder {
 					Map<String, String> map = maps.get(key);
 					for (Map.Entry<String, String> entry : map.entrySet()) {
 						String k = entry.getKey();
+						
 						String variable = String.format("	public static final String %s$%s", skey,
 								k.replace(key + ".", "").replace(".", "_"));
 						lv = variable.length() > lv ? variable.length() : lv;
@@ -258,8 +259,32 @@ public class MMessageBuilder {
 						}
 						
 						map.forEach((k, v) -> {
+							
+							if (!skey.startsWith("DESC")) {
+								String a1 = String.format("%s$%s", skey, k.replace(key + ".", "").replace(".", "_"));
+								String a2 = String.format("DESC$%s_%s", skey.toLowerCase(), k.replace(key + ".", "").replace(".", "_"));
+								
+								sb2.append("//").append("-".repeat(50)).append("\n");
+								
+								String action = "@GraphQLQuery";
+								if (skey.equalsIgnoreCase("QUERY")) {
+									action = "@GraphQLQuery";
+								}else if(skey.equalsIgnoreCase("MUTATION")) {
+									action = "@GraphQLMutation";
+								}else if(skey.equalsIgnoreCase("SUBSCRIPTION")) {
+									action = "@GraphQLSubscription";
+								}else if(skey.equalsIgnoreCase("TYPE")) {
+									action = "@GraphQLType";
+								}
+								
+								String com = "// %s(name=%s, description=%s)";
+								com = String.format(com, action, a1, a2);
+								sb2.append(com).append("\n");
+							}
+							
 							String variable = String.format("	public static final String %s$%s", skey,
 									k.replace(key + ".", "").replace(".", "_"));
+							
 							int rest = lv - variable.length();
 							String sp = rest > 0 ? " ".repeat(rest) : "";
 							

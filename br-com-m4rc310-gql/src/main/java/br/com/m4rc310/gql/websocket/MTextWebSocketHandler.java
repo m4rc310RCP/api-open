@@ -13,7 +13,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.reactivestreams.Publisher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,7 +32,6 @@ import br.com.m4rc310.gql.dto.messages.MMessage.MStartMessage;
 import br.com.m4rc310.gql.dto.messages.MMessages;
 import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 import br.com.m4rc310.gql.security.MGraphQLSecurity;
-import br.com.m4rc310.gql.services.MFluxService;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import io.leangen.graphql.spqr.spring.web.apollo.ApolloMessages;
@@ -61,9 +59,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	private final int keepAliveInterval;
 	private final Map<String, Disposable> subscriptions = new ConcurrentHashMap<>();
 	private final AtomicReference<ScheduledFuture<?>> keepAlive = new AtomicReference<>();
-
-	@Autowired
-	private MFluxService flux;
 
 	private MGraphQLJwtService jwtService;
 

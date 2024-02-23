@@ -12,7 +12,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +26,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>MGraphQLJwtService class.</p>
@@ -36,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
  * @version $Id: $Id
  */
 @Data
-@Slf4j
 public class MGraphQLJwtService {
 
 	@Value("${AUTH_SECURITY_SIGNING}")
