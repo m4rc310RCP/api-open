@@ -125,6 +125,8 @@ public class MGraphQLAutoConfiguration {
 		}
 		return encoder;
 	}
+	
+	
 
 	@Scope("singleton")
 	@Bean("message_builder")
@@ -368,7 +370,6 @@ public class MGraphQLAutoConfiguration {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				log.info("~> Add cors configurer");
 				registry.addMapping("/graphql").allowedOrigins("*");
 			}
 		};
