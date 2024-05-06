@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>br.com.m4rc310</groupId>
 		<artifactId>open</artifactId>
-		<version>1.0.14</version>
+		<version>1.0.17</version>
 
 	</parent>
 
@@ -27,6 +27,11 @@
 		<dependency>
 			<groupId>br.com.m4rc310</groupId>
 			<artifactId>br-com-m4rc310-weather</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.m4rc310</groupId>
+			<artifactId>br-com-m4rc310-gtim</artifactId>
 		</dependency>
 
 	</dependencies>

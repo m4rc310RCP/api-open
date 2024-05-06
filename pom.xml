@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.m4rc310</groupId>
 	<artifactId>open</artifactId>
-	<version>1.0.14</version>
+	<version>1.0.17</version>
 
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
@@ -74,6 +74,12 @@
 			<dependency>
 				<groupId>br.com.m4rc310</groupId>
 				<artifactId>br-com-m4rc310-gql</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>br.com.m4rc310</groupId>
+				<artifactId>br-com-m4rc310-gtim</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
@@ -204,5 +210,6 @@
 		<module>br-com-m4rc310-starter</module>
 		<module>br-com-m4rc310-gql</module>
 		<module>br-com-m4rc310-weather</module>
+		<module>br-com-m4rc310-gtim</module>
 	</modules>
 </project>
