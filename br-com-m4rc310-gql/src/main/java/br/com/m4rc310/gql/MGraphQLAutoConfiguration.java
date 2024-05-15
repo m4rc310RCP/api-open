@@ -370,7 +370,11 @@ public class MGraphQLAutoConfiguration {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/graphql").allowedOrigins("*");
+				registry.addMapping("/graphql")
+					.allowedOrigins("*")
+					.allowedMethods("POST", "OPTIONS")
+					.allowedHeaders("Authorization, Content-Type")
+					.maxAge(1728000);
 			}
 		};
 	}
