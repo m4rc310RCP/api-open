@@ -86,6 +86,19 @@ public class MMultiRegitry<K, T> {
 
 	        return ret == null ? Collections.emptyList() : ret;
 	    }
+	    /**
+	     * <p>getSizeRegistries.</p>
+	     *
+	     * @param type a {@link java.lang.Class} object
+	     * @return a {@link java.lang.Integer} object
+	     */
+	    public Integer getSizeRegistries(Class<?> type) {
+	    	try {
+				return getKeys(type).size();
+			} catch (Exception e) {
+				return 0;
+			}
+	    }
 
 	    /**
 	     * <p>get.</p>

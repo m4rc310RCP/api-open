@@ -1,0 +1,2 @@
+mvn versions:set -DnewVersion=2.50.1-SNAPSHOT -DprocessAllModules
+

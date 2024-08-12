@@ -21,15 +21,15 @@ import reactor.core.publisher.FluxSink;
 public class MFluxService {
 	/** The registry. */
 	protected final MMultiRegitry<String, Object> registry = new MMultiRegitry<>();
-	
+
 	private MUser user;
 
 	/**
 	 * Publish.
 	 *
-	 * @param <T>          the generic type
-	 * @param type         the type
-	 * @param key          the key
+	 * @param <T>  the generic type
+	 * @param type the type
+	 * @param key  the key
 	 * @return the publisher
 	 */
 	public <T> Publisher<T> publish(Class<T> type, Object key) {
@@ -37,12 +37,14 @@ public class MFluxService {
 	}
 
 	/**
-	 * <p>publish.</p>
+	 * <p>
+	 * publish.
+	 * </p>
 	 *
-	 * @param type a {@link java.lang.Class} object
-	 * @param key a {@link java.lang.Object} object
+	 * @param type         a {@link java.lang.Class} object
+	 * @param key          a {@link java.lang.Object} object
 	 * @param defaultValue a T object
-	 * @param <T> a T class
+	 * @param <T>          a T class
 	 * @return a {@link org.reactivestreams.Publisher} object
 	 */
 	public <T> Publisher<T> publish(Class<T> type, Object key, T defaultValue) {
@@ -53,24 +55,36 @@ public class MFluxService {
 //				fs.next(defaultValue);
 //			}
 //		}, FluxSink.OverflowStrategy.BUFFER);
-		
+
 		return Flux.create(fs -> {
-			registry.add(skey, fs.onDispose(()->registry.remove(skey)));
+			registry.add(skey, fs.onDispose(() -> registry.remove(skey)));
 			if (Objects.nonNull(defaultValue)) {
 				fs.next(defaultValue);
 			}
 		}, FluxSink.OverflowStrategy.BUFFER);
-		
-		
 	}
 
 	/**
-	 * <p>publishList.</p>
+	 * <p>
+	 * getSizeRegistries.
+	 * </p>
 	 *
 	 * @param type a {@link java.lang.Class} object
-	 * @param key a {@link java.lang.Object} object
+	 * @return a {@link java.lang.Integer} object
+	 */
+	public Integer getSizeRegistries(Class<?> type) {
+		return registry.getSizeRegistries(type);
+	}
+
+	/**
+	 * <p>
+	 * publishList.
+	 * </p>
+	 *
+	 * @param type         a {@link java.lang.Class} object
+	 * @param key          a {@link java.lang.Object} object
 	 * @param defaultValue a {@link java.util.List} object
-	 * @param <T> a T class
+	 * @param <T>          a T class
 	 * @return a {@link reactor.core.publisher.Flux} object
 	 */
 	public <T> Flux<List<T>> publishList(Class<T> type, Object key, List<T> defaultValue) {
@@ -118,10 +132,28 @@ public class MFluxService {
 
 		List<FluxSink<?>> sinks = registry.get(skey);
 		if (sinks != null) {
-	        sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));
-	    }
+			sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));
+		}
 
 		// registry.get(skey).forEach(sub -> sub.next(value));
+	}
+
+	/**
+	 * Call publish from type.
+	 *
+	 * @param <T>   the generic type
+	 * @param value the value
+	 * @throws java.lang.Exception the exception
+	 */
+	public <T> void callPublish(Class<T> type, T value) throws Exception {
+		registry.getKeys(type).forEach((key) -> {
+			try {
+				callPublish(key, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
 	}
 
 	/**
@@ -148,30 +180,31 @@ public class MFluxService {
 	@SuppressWarnings("unchecked")
 	public <T> void callPublish(Class<T> type, Object key, T value) throws Exception {
 		String skey = makeId(type, key);
-		//registry.get(skey).forEach(sub -> sub.next(value));
+		// registry.get(skey).forEach(sub -> sub.next(value));
 		List<FluxSink<?>> sinks = registry.get(skey);
 		if (sinks != null) {
-	        sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));
-	    }
+			sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));
+		}
 	}
-	
+
 	/**
-	 * <p>callListPublish.</p>
+	 * <p>
+	 * callListPublish.
+	 * </p>
 	 *
 	 * @param type a {@link java.lang.Class} object
-	 * @param key a {@link java.lang.Object} object
+	 * @param key  a {@link java.lang.Object} object
 	 * @param list a {@link java.util.List} object
-	 * @param <T> a T class
+	 * @param <T>  a T class
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void callListPublish(Class<T> type, Object key, List<T> list) {
 		String skey = makeId(type, key);
 		List<FluxSink<?>> sinks = registry.get(skey);
 		if (sinks != null) {
-	        sinks.forEach(sub -> ((FluxSink<List<T>>) sub).next(list));
-	    }
+			sinks.forEach(sub -> ((FluxSink<List<T>>) sub).next(list));
+		}
 	}
-	
 
 	/**
 	 * Authenticated user.
@@ -306,11 +339,11 @@ public class MFluxService {
 
 		return fields;
 	}
-	
+
 	public void setUser(MUser user) {
 		this.user = user;
 	}
-	
+
 	public MUser getUser() {
 		return user;
 	}

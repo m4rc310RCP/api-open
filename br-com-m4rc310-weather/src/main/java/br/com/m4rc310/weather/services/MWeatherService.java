@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
@@ -61,8 +62,8 @@ public class MWeatherService {
 		String sname = UriUtils.encode(locationName, StandardCharsets.UTF_8.toString());
 		String suri = String.format("%s/geo/1.0/direct?q=%s,%s,%s&limit=%d&appid=%s", weatherUrl, sname, state, "BR", 5,
 				apiKey);
-
-		URL uri = new URL(suri);
+		
+		URL uri = new URI(suri).toURL();
 		HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 		connection.setRequestProperty("accept", "application/json");
 
@@ -95,7 +96,7 @@ public class MWeatherService {
 		String suri = String.format("%s/data/3.0/onecall?lat=%s&lon=%s&units=metric&lang=pt_br&appid=%s", weatherUrl,
 				lat.toPlainString(), lon.toPlainString(), apiKey);
 
-		URL uri = new URL(suri);
+		URL uri = new URI(suri).toURL();
 		HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 		connection.setRequestProperty("accept", "application/json");
 
@@ -113,7 +114,7 @@ public class MWeatherService {
 	public MDistrict getDistrictFromIbge(Long ibgeId) throws Exception {
 		String suri = String.format("%s/api/v1/localidades/distritos/%d", ibgeUrl, ibgeId);
 
-		URL uri = new URL(suri);
+		URL uri = new URI(suri).toURL();
 		HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 		connection.setRequestProperty("accept", "application/json");
 
@@ -154,7 +155,7 @@ public class MWeatherService {
 			
 			log.info(suri);
 			
-			URL uri = new URL(suri);
+			URL uri = new URI(suri).toURL();
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("accept", "application/json");
 
@@ -175,7 +176,7 @@ public class MWeatherService {
 			name = normalize(name);
 			String suri = String.format("%s/api/v1/localidades/municipios/%s", ibgeUrl, name);
 			
-			URL uri = new URL(suri);
+			URL uri = new URI(suri).toURL();
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("accept", "application/json");
 
@@ -204,8 +205,7 @@ public class MWeatherService {
 
 	private <T> T get(Class<T> type, String suri) {
 		try {
-			log.info(suri);
-			URL uri = new URL(suri);
+			URL uri = new URI(suri).toURL();
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("accept", "application/json");
 
@@ -222,9 +222,7 @@ public class MWeatherService {
 	@SuppressWarnings("unused")
 	private <T> List<T> toList(Class<T> type, String suri) {
 		try {
-			log.info(suri);
-
-			URL uri = new URL(suri);
+			URL uri = new URI(suri).toURL();
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("accept", "application/json");
 
@@ -242,7 +240,7 @@ public class MWeatherService {
 	@SuppressWarnings("unchecked")
 	private <T> T[] toArray(Class<T> type, String suri) {
 		try {
-			URL uri = new URL(suri);
+			URL uri = new URI(suri).toURL();
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("accept", "application/json");
 

@@ -2,6 +2,7 @@ package br.com.m4rc310.gtim.services;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.commons.codec.binary.Base64;
@@ -39,7 +40,7 @@ public class MEanCache {
 			String suri = url;
 			suri = String.format("%s/api/desc/%d", suri, ean);
 
-			URL uri = new URL(suri);
+			URL uri = new URI(suri).toURL();
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("accept", "application/json");
 			
@@ -73,7 +74,7 @@ public class MEanCache {
 			String uri = url;
 			uri = String.format("%s/api/gtin/%d", uri, product.getEan());
 			
-			java.net.URL url = new java.net.URL(uri);
+			java.net.URL url = new URI(uri).toURL();
 			InputStream is = url.openStream();
 			byte[] bytes = IOUtils.toByteArray(is);
 			return Base64.encodeBase64String(bytes);
