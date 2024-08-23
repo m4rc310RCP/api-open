@@ -23,6 +23,8 @@ public class MFluxService {
 	protected final MMultiRegitry<String, Object> registry = new MMultiRegitry<>();
 
 	private MUser user;
+	
+	private String ipClient;
 
 	/**
 	 * Publish.
@@ -49,12 +51,6 @@ public class MFluxService {
 	 */
 	public <T> Publisher<T> publish(Class<T> type, Object key, T defaultValue) {
 		String skey = makeId(type, key);
-//		return (Publisher<T>) Flux.create(fs -> {
-//			registry.add(skey, fs.onDispose(() -> registry.remove(skey)));
-//			if (Objects.nonNull(defaultValue)) {
-//				fs.next(defaultValue);
-//			}
-//		}, FluxSink.OverflowStrategy.BUFFER);
 
 		return Flux.create(fs -> {
 			registry.add(skey, fs.onDispose(() -> registry.remove(skey)));
@@ -146,14 +142,22 @@ public class MFluxService {
 	 * @throws java.lang.Exception the exception
 	 */
 	public <T> void callPublish(Class<T> type, T value) throws Exception {
-		registry.getKeys(type).forEach((key) -> {
-			try {
-				callPublish(key, value);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		List<String> keys = registry.getKeys(type);
+		for (String key : keys) {
+			//System.out.println(key);
+			callPublish(type, key, value);
+		}
+//		registry.getKeys(type).forEach((key) -> {
+//			try {
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		});
 
+	}
+
+	public List<String> getKeys(Class<?> type) {
+		return registry.getKeys(type);
 	}
 
 	/**
@@ -179,8 +183,7 @@ public class MFluxService {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void callPublish(Class<T> type, Object key, T value) throws Exception {
-		String skey = makeId(type, key);
-		// registry.get(skey).forEach(sub -> sub.next(value));
+		String skey = String.format("%s", key); // makeId(type, key);
 		List<FluxSink<?>> sinks = registry.get(skey);
 		if (sinks != null) {
 			sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));
@@ -347,4 +350,13 @@ public class MFluxService {
 	public MUser getUser() {
 		return user;
 	}
+	
+	public void setIPClient(String ipClient) {
+		this.ipClient = ipClient;
+	}
+	
+	public String getIPClient() {
+		return ipClient;
+	}
+	
 }

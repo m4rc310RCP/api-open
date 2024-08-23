@@ -1,5 +1,6 @@
 package br.com.m4rc310.gql;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -41,7 +42,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -76,6 +79,10 @@ import io.leangen.graphql.execution.ResolverInterceptorFactory;
 import io.leangen.graphql.generator.mapping.TypeMapper;
 import io.leangen.graphql.metadata.messages.MessageBundle;
 import io.leangen.graphql.spqr.spring.util.GlobalResolverInterceptorFactory;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -392,8 +399,36 @@ public class MGraphQLAutoConfiguration {
 			error = String.format(error, IMAuthUserProvider.class.getName());
 			throw new UnsupportedOperationException(error);
 		}
+		
+		http.addFilterBefore(new IpCaptureFilter(flux), UsernamePasswordAuthenticationFilter.class);
+		
 		return graphQLSecurity.getSecurityFilterChain(http, jwt, provider, flux);
 	}
+	
+    public class IpCaptureFilter extends OncePerRequestFilter {
+    	
+        private final MFluxService flux;
+
+		public IpCaptureFilter(MFluxService flux) {
+        	this.flux = flux;
+		}
+
+		@Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+                throws ServletException, IOException {
+
+            String ipAddress = request.getHeader("X-Forwarded-For");
+            if (ipAddress == null || ipAddress.isEmpty()) {
+                ipAddress = request.getRemoteAddr();  
+            }
+
+            flux.setIPClient(ipAddress);
+            
+
+            filterChain.doFilter(request, response);
+        }
+    }
+	
 
 	@Bean
 	UserDetailsServiceImpl loadUserDetailsServiceImpl() {
