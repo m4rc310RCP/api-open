@@ -13,20 +13,16 @@ jobs:
         with:
           java-version: "21"
           distribution: temurin
-      - name: Add additional Maven server to settings.xml
-        run: >
-          echo "Adding additional Maven server to settings.xml"
-            sed -i '/<\/servers>/i\
-                  <server>\
-                    <id>ossrh</id>\
-                    <username>'"${{ vars.MVN_CENTRAL_USERNAME }}"'</username>\
-                    <password>'"${{ secrets.MVN_CENTRAL_PASSWORD }}"'</password>\
-                  </server>' ~/.m2/settings.xml
+          server-id: ossrh
+          server-username: ${{ vars.MVN_CENTRAL_USERNAME }}
+          server-password: ${{ secrets.MVN_CENTRAL_PASSWORD }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: Escol@1979270881
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
       - name: Set version
         run: |
-          run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+          mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
       - name: Publish package
         run: ls
         env:
