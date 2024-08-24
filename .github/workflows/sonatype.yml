@@ -19,11 +19,11 @@ jobs:
 
       - name: Import GPG key
         run: |
-		      echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-		      gpg --batch --import private_key.asc
-		    shell: sh/
+		  echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+		  gpg --batch --import private_key.asc
+		shell: sh\
 
-      - name: List GPG keys
+      - sname: List GPG keys
         run: |
           gpg --list-secret-keys --keyid-format LONG
         shell: /bin/bash
