@@ -50,6 +50,12 @@ jobs:
 
           gpg --batch --import private_key.asc
         shell: bash
+		
+      - name: Configure GPG
+        run: |
+		    echo "default-key 934F4F1417C489AC" >> ~/.gnupg/gpg.conf
+		    echo "use-agent" >> ~/.gnupg/gpg.conf
+
       - name: Set GPG TTY
         run: echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
       - name: Deploy to Maven Central
