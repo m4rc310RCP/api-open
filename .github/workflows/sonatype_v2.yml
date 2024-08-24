@@ -19,7 +19,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Set version
-        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+	    rum: cat ${{ github.event.release.tag_name }}
       - name: Publish package
         run: mvn -P release --batch-mode deploy -DskipTests
         env:
