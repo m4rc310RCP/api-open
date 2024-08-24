@@ -26,8 +26,7 @@ jobs:
         run: cat ~/.m2/settings.xml
       - name: Set version
         run: |
-          echo ${{ vars.MVN_CENTRAL_USERNAME }}
-          echo ${{ secrets.MVN_CENTRAL_PASSWORD }}
+          run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
       - name: Publish package
         run: ls
         env:
