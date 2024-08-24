@@ -20,7 +20,7 @@ release-maven-central:
             server-id: maven-central-release
             server-username: MVN_CENTRAL_USERNAME
             server-password: MVN_CENTRAL_PASSWORD
-        - name: Calculate version
+        - name: Calculate version -
         id: calculate-version
         uses: bitshifted/git-auto-semver@v1
         with:
