@@ -20,12 +20,12 @@ jobs:
 
       - name: Add additional Maven server to settings.xml
         run: |
-		  echo "Adding additional Maven server to settings.xml"
-		  xmlstarlet ed -L -s "/settings/servers" -t elem -n "server" \
-		    -s "/settings/servers/server[last()]" -t elem -n "id" -v "ossrh" \
-			-s "/settings/servers/server[last()]" -t elem -n "username" -v "${{ vars.OSSRH_USERNAME }}" \
-			-s "/settings/servers/server[last()]" -t elem -n "password" -v "${{ secrets.OSSRH_PASSWORD }}" \
-			~/.m2/settings.xml
+		      echo "Adding additional Maven server to settings.xml"
+		      xmlstarlet ed -L -s "/settings/servers" -t elem -n "server" \
+		        -s "/settings/servers/server[last()]" -t elem -n "id" -v "ossrh" \
+			      -s "/settings/servers/server[last()]" -t elem -n "username" -v "${{ vars.OSSRH_USERNAME }}" \
+			      -s "/settings/servers/server[last()]" -t elem -n "password" -v "${{ secrets.OSSRH_PASSWORD }}" \
+			      ~/.m2/settings.xml
         env:
           OSSRH_USERNAME: ${{ vars.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
