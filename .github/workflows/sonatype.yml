@@ -47,9 +47,6 @@ jobs:
       - name: Import GPG Key
         run: >
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-
-          gpg --pinentry-mode loopback --edit-key marcelo.utfpr@me.com trust quit
-
           gpg --batch --import private_key.asc
         shell: bash
       - name: Configure GPG
