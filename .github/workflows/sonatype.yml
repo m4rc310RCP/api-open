@@ -21,7 +21,7 @@ jobs:
         run: |
 		      echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
 		      gpg --batch --import private_key.asc
-		    shell: sh\
+		    shell: sh/
 
       - name: List GPG keys
         run: |
