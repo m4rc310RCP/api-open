@@ -44,6 +44,20 @@ jobs:
         with:
           distribution: adopt
           java-version: "17"
+	  - name: Add additional Maven server to settings.xml
+	    run: |
+	      echo "Adding additional Maven server to settings.xml"
+	      sed -i '/<\/servers>/i\
+	          <server>\
+	            <id>ossrh</id>\
+	            <username>'"${{ vars.MVN_CENTRAL_USERNAME }}"'</username>\
+	            <password>'"${{ secrets.MVN_CENTRAL_PASSWORD }}"'</password>\
+	          </server>' ~/.m2/settings.xml
+	  - name: Display modified settings.xml
+	    run: cat ~/.m2/settings.xml
+	    env:
+	      OSSRH_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
+	      OSSRH_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
       - name: Import GPG Key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
