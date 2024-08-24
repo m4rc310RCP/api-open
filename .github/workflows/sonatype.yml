@@ -5,19 +5,19 @@ on:
     branches:
       - master
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+          gpg --import private_key.asc
         
-        - name: Import GPG key
-          run: |
-            echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-            gpg --import private_key.asc
-          
-        - name: Sign commits
-          run: |
-            git config --global user.signingkey <KEY_ID>
-            git config --global commit.gpgSign true
+      - name: Sign commits
+        run: |
+          git config --global user.signingkey <KEY_ID>
+          git config --global commit.gpgSign true
