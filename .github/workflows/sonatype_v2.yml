@@ -22,12 +22,12 @@ jobs:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}  # Use segredo para passphrase
 
       # Adicionando um passo de debug para verificar a chave GPG
-      - name: Debug GPG Key
-        run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-          gpg --batch --import private_key.asc || (echo "Failed to import GPG key" && exit 1)
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      #- name: Debug GPG Key
+      #  run: |
+      #    echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+      #    gpg --batch --import private_key.asc || (echo "Failed to import GPG key" && exit 1)
+      #  env:
+      #    GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
