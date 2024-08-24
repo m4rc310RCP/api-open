@@ -36,6 +36,11 @@ jobs:
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
           gpg --batch --import private_key.asc
         shell: bash
+      - name: Configure GPG
+	    run: |
+		  echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
+		  echo "default-key Escol@1979270881" >> ~/.gnupg/gpg.conf
+		  echo "use-agent" >> ~/.gnupg/gpg.conf
       - name: Build with Maven
         run: mvn clean deploy
 
