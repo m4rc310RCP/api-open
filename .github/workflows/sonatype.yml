@@ -51,7 +51,7 @@ jobs:
           gpg --batch --import private_key.asc
         shell: bash
       - name: Deploy to Maven Central
-        run: mvn clean
+        run: mvn deploy
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
