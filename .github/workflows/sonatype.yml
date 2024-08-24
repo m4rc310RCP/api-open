@@ -16,12 +16,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y gnupg
-      - name: Import GPG key
-        run: |
-		      echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-		      gpg --batch --import private_key.asc
-		    shell: sh\
-
+ 
       - sname: List GPG keys
         run: |
           gpg --list-secret-keys --keyid-format LONG
