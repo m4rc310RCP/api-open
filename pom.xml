@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.m4rc310</groupId>
 	<artifactId>open</artifactId>
-	<version>1.0.23</version>
+	<version>${revision}</version>
 
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
@@ -32,12 +32,14 @@
 		<spring-boot.version>3.2.2</spring-boot.version>
 		<fastjson.version>1.2.24</fastjson.version>
 		<spqr.utils.version>0.0.7</spqr.utils.version>
+		<revision>0.0.0-SNAPSHOT</revision>
 	</properties>
 
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 
@@ -47,6 +49,7 @@
 		<developerConnection>
 			scm:git:ssh://git@github.com:m4rc310RCP/api-open.git</developerConnection>
 		<url>https://github.com/m4rc310RCP/api-open</url>
+		<tag>HEAD</tag>
 	</scm>
 
 	<dependencyManagement>
@@ -86,15 +89,27 @@
 	</dependencyManagement>
 
 	<distributionManagement>
+		<!--		<snapshotRepository>-->
+		<!--			<id>ossrh</id>-->
+		<!--
+		<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
+		<!--		</snapshotRepository>-->
+		<!--		<repository>-->
+		<!--			<id>ossrh</id>-->
+		<!--			<url>-->
+		<!--
+		https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+		<!--		</repository>-->
 		<snapshotRepository>
-			<id>ossrh</id>
+			<id>maven-central-snapshots</id>
 			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>ossrh</id>
-			<url>
-				https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<id>maven-central-release</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
 		</repository>
+
+
 	</distributionManagement>
 
 	<build>
@@ -124,6 +139,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -137,6 +153,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -157,12 +174,20 @@
 						<goals>
 							<goal>sign</goal>
 						</goals>
-						<configuration> ÷ <keyname>${gpg.keyname}</keyname>
-							<passphraseServerId>
-							${gpg.keyname}</passphraseServerId>
-							<!-- 
-							-->
+						<configuration>
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
 						</configuration>
+
+						<!--						<configuration> ÷
+						<keyname>${gpg.keyname}</keyname>-->
+						<!--							<passphraseServerId>-->
+						<!--							${gpg.keyname}</passphraseServerId>-->
+						<!--							 -->
+						<!--							-->
+						<!--						</configuration>-->
 					</execution>
 				</executions>
 			</plugin>
