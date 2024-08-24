@@ -27,8 +27,8 @@ jobs:
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
         env:
-          OSSRH_USERNAME: ${{ vars.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
       - name: Build with Maven
         run: mvn clean
       - name: Ready .settings.xml
