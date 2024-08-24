@@ -18,7 +18,7 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: Add additional Maven server to settings.xml
+      - name: Add additional Maven server to settings.xml v1
 	    run: |
 		  echo "Adding additional Maven server to settings.xml"
 		  xmlstarlet ed -L -s "/settings/servers" -t elem -n "server" \
