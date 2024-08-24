@@ -18,7 +18,7 @@ jobs:
           server-username: ${{ vars.MVN_CENTRAL_USERNAME }}
           server-password: ${{ secrets.MVN_CENTRAL_PASSWORD }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-		  gpg-passphrase: Escol@1979270881
+          gpg-passphrase: Escol@1979270881
       - name: Set version
         run: |
           echo ${{ vars.MVN_CENTRAL_USERNAME }}
