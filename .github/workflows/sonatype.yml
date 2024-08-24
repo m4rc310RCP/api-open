@@ -22,7 +22,7 @@ jobs:
         run: mvn clean
 
       - name: Ready .settings.xml
-	    run: cat ~/.m2/settings.xml
+	      run: cat ~/.m2/settings.xml
 
   deploy:
     runs-on: ubuntu-latest
