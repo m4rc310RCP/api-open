@@ -53,7 +53,7 @@ jobs:
       - name: Set GPG TTY
         run: echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
       - name: Deploy to Maven Central
-        run: mvn deploy
+        run: ls
         env:
           OSSRH_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
