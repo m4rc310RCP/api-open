@@ -17,8 +17,8 @@ jobs:
           server-id: central
       - name: Set version
         run: |
-		  echo ${{ vars.MVN_CENTRAL_USERNAME }}
-		  echo ${{ secrets.MVN_CENTRAL_PASSWORD }}
+          echo ${{ vars.MVN_CENTRAL_USERNAME }}
+          echo ${{ secrets.MVN_CENTRAL_PASSWORD }}
       - name: Publish package
         run: ls
         env:
