@@ -16,7 +16,7 @@ jobs:
           distribution: temurin
           server-id: central
       - name: Set version
-        run: MAVEN_USERNAME
+        run: echo MAVEN_USERNAME
       - name: Publish package
         run: ls
         env:
