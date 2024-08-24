@@ -52,7 +52,7 @@ jobs:
       - name: Configure GPG
         run: |
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
-          echo "default-key marcelo.utfpr@me.com" >> ~/.gnupg/gpg.conf
+          echo "default-key C07CF1E759DC947AE5CEE9A24FCA1667376B7912" >> ~/.gnupg/gpg.conf
           echo "use-agent" >> ~/.gnupg/gpg.conf
       - name: Deploy to Maven Central
         run: mvn -X deploy
