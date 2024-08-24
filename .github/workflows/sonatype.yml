@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
 
       - name: Add additional Maven server to settings.xml
-        run: |
+	    run: |
 		  echo "Adding additional Maven server to settings.xml"
 		  xmlstarlet ed -L -s "/settings/servers" -t elem -n "server" \
 		    -s "/settings/servers/server[last()]" -t elem -n "id" -v "ossrh" \
