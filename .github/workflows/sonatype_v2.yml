@@ -23,6 +23,8 @@ jobs:
                     <username>'"${{ vars.MVN_CENTRAL_USERNAME }}"'</username>\
                     <password>'"${{ secrets.MVN_CENTRAL_PASSWORD }}"'</password>\
                   </server>' ~/.m2/settings.xml
+      - name: Display modified settings.xml
+        run: cat ~/.m2/settings.xml
       - name: Set version
         run: |
           echo ${{ vars.MVN_CENTRAL_USERNAME }}
