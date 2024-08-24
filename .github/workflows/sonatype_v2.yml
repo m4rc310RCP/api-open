@@ -16,7 +16,9 @@ jobs:
           distribution: temurin
           server-id: central
       - name: Set version
-        run: echo MAVEN_USERNAME
+        run: |
+		  echo ${{ vars.MVN_CENTRAL_USERNAME }}
+		  echo ${{ secrets.MVN_CENTRAL_PASSWORD }}
       - name: Publish package
         run: ls
         env:
