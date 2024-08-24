@@ -89,18 +89,16 @@
 	</dependencyManagement>
 
 	<distributionManagement>
-				<snapshotRepository>
-					<id>ossrh</id>
-		
-		<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-				</snapshotRepository>
-				<repository>
-					<id>ossrh</id>
-					<url>
-		
-		https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-				</repository>
+		<snapshotRepository>
+			<id>ossrh</id>
 
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>
+				https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 
 
 	</distributionManagement>
@@ -115,7 +113,7 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
-		
+
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -166,12 +164,12 @@
 
 						<configuration>
 							<gpgArguments>
-					          <arg>--pinentry-mode</arg>
-					          <arg>loopback</arg>
-					        </gpgArguments>
+								<arg>--batch</arg>
+								<arg>--no-tty</arg>
+							</gpgArguments>
 							<keyname>${gpg.keyname}</keyname>
 							<passphraseServerId>${gpg.keyname}</passphraseServerId>
-						</configuration>					
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
