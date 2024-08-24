@@ -45,7 +45,7 @@ jobs:
           distribution: adopt
           java-version: "17"
       - name: Import GPG Key
-        run: >
+        run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
           gpg --batch --import private_key.asc
         shell: bash
