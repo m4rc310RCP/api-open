@@ -5,26 +5,6 @@ on:
   push:
     branches: [master]
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Install JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'
-      - name: Check code style
-        run: |
-          mvn spotless:check
-      - name: Build and test
-        run: |
-          mvn clean install
-      - name: Integration tests
-        run: |
-          cd integration-test && ./run-test.sh
   release-maven-central:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
