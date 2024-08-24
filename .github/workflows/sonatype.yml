@@ -35,7 +35,7 @@ jobs:
       - name: Release to Maven repo
         run: |
           mvn -P release -Dgpg.keyname=${{ secrets.GPG_KEY_NAME }} -Dgpg.passphrase=${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }} \
-              -Drevision=${{ 1.0.24 }} deploy
+              -Drevision=1.0.24 deploy
         env:
           MVN_CENTRAL_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
