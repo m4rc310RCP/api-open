@@ -15,6 +15,8 @@ jobs:
         with:
           distribution: adopt
           java-version: "17"
+      - name: Install xmlstarlet
+        run: sudo apt-get install -y xmlstarlet
       - name: Add additional Maven server to settings.xml v1
         run: >
           echo "Adding additional Maven server to settings.xml"
