@@ -50,6 +50,8 @@ jobs:
 
           gpg --batch --import private_key.asc
         shell: bash
+      - name: Set GPG TTY
+        run: echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
       - name: Deploy to Maven Central
         run: mvn -X deploy
         env:
