@@ -8,7 +8,6 @@ jobs:
   release-maven-central:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-    needs: build-and-test
     steps:
       - uses: actions/checkout@v3
         with:
