@@ -1,34 +1,47 @@
-release-maven-central:
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
     steps:
-        - uses: actions/checkout@v3
-        with:
-            fetch-depth: 0
-            fetch-tags: true
-        - name: Import GPG signing key
-        uses: crazy-max/ghaction-import-gpg@v5
-        with:
-            gpg_private_key: ${{ secrets.MAVEN_SIGNING_KEY }}
-            passphrase: ${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }}
-        - name: Install JDK
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-            distribution: 'temurin'
-            java-version: '17'
-            cache: 'maven'
-            server-id: maven-central-release
-            server-username: MVN_CENTRAL_USERNAME
-            server-password: MVN_CENTRAL_PASSWORD
-        - name: Calculate version -
-        id: calculate-version
-        uses: bitshifted/git-auto-semver@v1
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn clean install
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
-            create_tag: true
-        - name: Release to Maven repo
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Import GPG Key
         run: |
-            mvn -P release -Dgpg.keyname=${{ secrets.GPG_KEY_NAME }} -Dgpg.passphrase=${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }} \
-                -Drevision=${{ steps.calculate-version.outputs.version-string }} deploy            
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+          gpg --batch --import private_key.asc
+        shell: bash
+
+      - name: Deploy to Maven Central
+        run: mvn deploy
         env:
-            MVN_CENTRAL_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
-            MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
