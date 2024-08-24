@@ -15,8 +15,8 @@ jobs:
         uses: sonatype/actions/evaluate@v1
         with:
           iq-server-url: https://your.lifecycle.server
-          username: ${{ secrets.LIFECYCLE_USERNAME }}
-          password: ${{ secrets.LIFECYCLE_PASSWORD }}
+          username: mls
+          password: mls
           application-id: lifecycle-app
           scan-targets: package.json
       # Print out the results
