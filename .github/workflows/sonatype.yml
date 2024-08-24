@@ -18,18 +18,18 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.MAVEN_SIGNING_KEY }}
           passphrase: ${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }}
-	  - name: Set up Maven settings
-	    run: |
-	      mkdir -p ~/.m2
-	      echo "<settings>
-	        <servers>
-	          <server>
-	            <id>ossrh</id>
-	            <username>${{ vars.MVN_CENTRAL_USERNAME }}</username>
-	            <password>${{ secrets.MVN_CENTRAL_PASSWORD }}</password>
-	          </server>
-	        </servers>
-	      </settings>" > ~/.m2/settings.xml
+      - name: Set up Maven settings
+        run: |
+          mkdir -p ~/.m2
+          echo "<settings>
+            <servers>
+              <server>
+                <id>ossrh</id>
+                <username>${{ vars.MVN_CENTRAL_USERNAME }}</username>
+                <password>${{ secrets.MVN_CENTRAL_PASSWORD }}</password>
+              </server>
+            </servers>
+          </settings>" > ~/.m2/settings.xml
       - name: Install JDK
         uses: actions/setup-java@v3
         with:
