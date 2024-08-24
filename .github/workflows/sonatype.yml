@@ -1,9 +1,9 @@
-name: Deploy to Sonatype OSSRH
+name: GPG Signing Workflow
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -12,12 +12,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
+      - name: Install GPG
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg
+      
       - name: Import GPG key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-          gpg --import private_key.asc
-        
-      - name: Sign commits
+          gpg --batch --import private_key.asc
+        shell: /bin/bash
+
+      - name: Configure Git to sign commits
         run: |
           git config --global user.signingkey marcelo.utfpr@me.com
           git config --global commit.gpgSign true
+        shell: /bin/bash
+
+      - name: Sign a commit
+        run: |
+          git commit -S -m "Signing a commit"
+        shell: /bin/bash
