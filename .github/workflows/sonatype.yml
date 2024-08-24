@@ -3,7 +3,7 @@ name: Deploy to Sonatype OSSRH
 on:
   push:
     branches:
-      - main  # Defina o branch que deve acionar o deploy
+      - master
 
 jobs:
   build:
