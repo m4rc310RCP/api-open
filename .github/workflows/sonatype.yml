@@ -19,5 +19,5 @@ jobs:
         
       - name: Sign commits
         run: |
-          git config --global user.signingkey <KEY_ID>
+          git config --global user.signingkey marcelo.utfpr@me.com
           git config --global commit.gpgSign true
