@@ -5,32 +5,19 @@ on:
     branches:
       - master
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v3
-
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'  # Especifique sua versão do Java
-        server-id: ossrh
-        server-username: ${{ secrets.OSSRH_USERNAME }}
-        server-password: ${{ secrets.OSSRH_TOKEN }}
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
-    - name: Build with Maven
-      run: mvn -B clean install
-
-    - name: Deploy to Sonatype OSSRH
-      env:
-        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      run: mvn -B deploy -P release
+  jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+        
+        - name: Import GPG key
+          run: |
+            echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+            gpg --import private_key.asc
+          
+        - name: Sign commits
+          run: |
+            git config --global user.signingkey <KEY_ID>
+            git config --global commit.gpgSign true
