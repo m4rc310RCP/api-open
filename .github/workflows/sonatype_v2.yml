@@ -1,24 +1,27 @@
-name: Sonatype Workflow
-on: push
+name: Publish package to the Maven Central Repository
+on:
+  release:
+    types: [created]
 jobs:
-  sonatype-cli:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      # some steps are omitted...
-      # Check out your code
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-      # Perform an evaluation
-      - name: Run evaluate  action
-        id: evaluate
-        uses: sonatype/actions/evaluate@v1
+      - uses: actions/checkout@v4
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v4
         with:
-          iq-server-url: https://your.lifecycle.server
-          username: mls
-          password: mls
-          application-id: lifecycle-app
-          scan-targets: package.json
-      # Print out the results
-      - name: Log evaluate action output
-        run: echo "${{ steps.evaluate.outputs.scan-id }} ${{ steps.evaluate.outputs.report-url }}"
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_SIGNING_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+      - name: Set version
+        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+      - name: Publish package
+        run: mvn -P release --batch-mode deploy -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_SIGNING_KEY_PASSWORD }}
