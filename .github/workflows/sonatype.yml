@@ -1,35 +1,62 @@
-release-maven-central:
+name: Release new version to Maven Central
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [main]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+      - name: Check code style
+        run: |
+          mvn spotless:check
+      - name: Build and test
+        run: |
+          mvn clean install
+      - name: Integration tests
+        run: |
+          cd integration-test && ./run-test.sh
+  release-maven-central:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
     needs: build-and-test
     steps:
-        - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-            fetch-depth: 0
-            fetch-tags: true
-        - name: Import GPG signing key
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Import GPG signing key
         uses: crazy-max/ghaction-import-gpg@v5
         with:
-            gpg_private_key: ${{ secrets.MAVEN_SIGNING_KEY }}
-            passphrase: ${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }}
-        - name: Install JDK
+          gpg_private_key: ${{ secrets.MAVEN_SIGNING_KEY }}
+          passphrase: ${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }}
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
-            distribution: 'temurin'
-            java-version: '17'
-            cache: 'maven'
-            server-id: maven-central-release
-            server-username: MVN_CENTRAL_USERNAME
-            server-password: MVN_CENTRAL_PASSWORD
-        - name: Calculate version
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'
+          server-id: maven-central-release
+          server-username: MVN_CENTRAL_USERNAME
+          server-password: MVN_CENTRAL_PASSWORD
+      - name: Calculate version
         id: calculate-version
         uses: bitshifted/git-auto-semver@v1
         with:
-            create_tag: true
-        - name: Release to Maven repo
+          create_tag: true
+      - name: Release to Maven repo
         run: |
-            mvn -P release -Dgpg.keyname=${{ secrets.GPG_KEY_NAME }} -Dgpg.passphrase=${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }} \
-                -Drevision=${{ steps.calculate-version.outputs.version-string }} deploy            
+          mvn -P release -Dgpg.keyname=${{ secrets.GPG_KEY_NAME }} -Dgpg.passphrase=${{ secrets.MAVEN_SIGNING_KEY_PASSPHRASE }} \
+              -Drevision=${{ steps.calculate-version.outputs.version-string }} deploy
         env:
-            MVN_CENTRAL_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
-            MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
+          MVN_CENTRAL_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
+          MVN_CENTRAL_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
