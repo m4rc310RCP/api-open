@@ -16,7 +16,7 @@ jobs:
           distribution: temurin
           server-id: central
       - name: Set version
-        run: cat ${{ github.event.release.tag_name }}
+        run: echo ${{ github.event.release.tag_name }}
       - name: Publish package
         run: ls
         env:
