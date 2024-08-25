@@ -32,9 +32,8 @@ jobs:
       - name: Ready .settings.xml
         run: cat ~/.m2/settings.xml
       - name: Import GPG Key
-        run: >
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
-
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
           gpg --batch --import private_key.asc
         shell: bash
       - name: Configure GPG
