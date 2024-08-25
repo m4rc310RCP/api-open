@@ -21,8 +21,8 @@ jobs:
           sed -i '/<\/servers>/i\
               <server>\
                 <id>ossrh</id>\
-                <username>OSSRH_USERNAME</username>\
-                <password>'"${{ secrets.MVN_CENTRAL_PASSWORD }}"'</password>\
+                <username>m4rc310</username>\
+                <password>Escol@1979270881</password>\
               </server>' ~/.m2/settings.xml
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
