@@ -36,6 +36,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo ${GITHUB_REF_NAME#v}
           echo "mvn versions:set -DnewVersion=${{ env.VERSION }}"
  #     - name: Set Maven Version
  #       run: mvn versions:set -DnewVersion=${{ github.ref_name }}
