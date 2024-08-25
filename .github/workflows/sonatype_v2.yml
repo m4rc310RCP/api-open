@@ -34,6 +34,6 @@ jobs:
           -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --batch-mode -X
         env:
           MAVEN_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_PASSWORD: Escol@1979270881
+          MAVEN_GPG_PASSPHRASE: Escol@1979270881
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
