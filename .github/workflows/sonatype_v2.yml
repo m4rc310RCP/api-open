@@ -27,9 +27,11 @@ jobs:
         env:
           SETTINGS_SECURITY_XML: ${{ secrets.SETTINGS_SECURITY_XML }}
       - name: Set version
-        run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+        #run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+		run: mvn versions:set -DnewVersion=1.0.25
       - name: Publish package
-        run: mvn deploy -P release -s /home/runner/.m2/settings.xml
+        #run: mvn deploy -P release -s /home/runner/.m2/settings.xml
+		run:  mvn clean deploy -P release -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} -s ~/.m2/settings.xml --batch-mode
         env:
           MAVEN_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
