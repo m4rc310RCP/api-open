@@ -17,22 +17,13 @@ jobs:
           java-version: "21"
       - name: Add additional Maven server to settings.xml
         run: |
-          echo "Adding additional Maven server to settings.xml"
-          sed -i '/<\/servers>/i\
-              <server>\
-                <id>ossrh</id>\
-                <username>m4rc310</username>\
-                <password>Escol@1979270881</password>\
-              </server>' ~/.m2/settings.xml
+		  echo "${{ vars.SETTINGS_XML }}" > ~/.m2/settings.xml
+		
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
-        env:
-          OSSRH_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
       - name: Import GPG Key
-        run: >
+        run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
-
           gpg --batch --import private_key.asc
         shell: bash
       - name: Configure GPG
@@ -40,4 +31,4 @@ jobs:
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
           echo "use-agent" >> ~/.gnupg/gpg.conf
       - name: Build with Maven
-        run: mvn clean deploy -s /home/runner/.m2/settings.xml -Dgpg.passphrase=Escol@1979270881 --batch-mode -X
+        run: mvn clean deploy -s ~/.m2/settings.xml -Dgpg.passphrase=Escol@1979270881 --batch-mode -X
