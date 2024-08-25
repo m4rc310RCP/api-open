@@ -2,8 +2,8 @@
 name: CI/CD Workflow
 on:
   push:
-    branches:
-      - master
+    tags:
+      - v*
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,6 +31,8 @@ jobs:
           echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
           gpg --batch --import private_key.asc
         shell: bash
+      - name: Set Maven Version
+	    run: mvn versions:set -DnewVersion=${{ github.ref_name }}
       - name: Configure GPG
         run: |
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
