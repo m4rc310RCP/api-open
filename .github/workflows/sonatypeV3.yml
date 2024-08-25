@@ -32,7 +32,7 @@ jobs:
           gpg --batch --import private_key.asc
         shell: bash
       - name: Set Maven Version
-	    run: mvn versions:set -DnewVersion=${{ github.ref_name }}
+        run: mvn versions:set -DnewVersion=${{ github.ref_name }}
       - name: Configure GPG
         run: |
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
