@@ -17,7 +17,7 @@ jobs:
           server-id: ossrh
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-private-key: GPG_PRIVATE_KEY
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Create settings-security.xml <~ OK
         run: echo "${{ vars.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
@@ -30,8 +30,9 @@ jobs:
       - name: Set version
         run: mvn versions:set -DnewVersion=1.0.25
       - name: Publish package
-        run: mvn clean deploy -P release -s /home/runner/.m2/settings.xml -Dgpg.passphrase=Escol@1979270881 --batch-mode -X
+        run: mvn clean deploy -P release -s /home/runner/.m2/settings.xml -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --batch-mode -X
         env:
           MAVEN_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+		  GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
