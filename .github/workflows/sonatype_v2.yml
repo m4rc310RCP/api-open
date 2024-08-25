@@ -1,7 +1,8 @@
 name: Publish package to the Maven Central Repository
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - master
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
           server-username: ${{ vars.MVN_CENTRAL_USERNAME }}
           server-password: ${{ secrets.MVN_CENTRAL_PASSWORD }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}  # Use segredo para passphrase
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       # Adicionando um passo de debug para verificar a chave GPG
       #- name: Debug GPG Key
@@ -29,6 +30,12 @@ jobs:
 
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
+		
+      - name: Create settings-security.xml
+        run: |
+          echo "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
+        env:
+          SETTINGS_SECURITY_XML: ${{ secrets.SETTINGS_SECURITY_XML }}
 
       - name: Set version
         run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
