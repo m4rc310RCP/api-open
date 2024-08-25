@@ -26,7 +26,7 @@ jobs:
       - name: Display modified settings.xml
         run: |
           cat ~/.m2/settings.xml
-          cat ~/.m2/settings-security.xml
+#          cat ~/.m2/settings-security.xml
       - name: Set version
         run: mvn versions:set -DnewVersion=1.0.25
       - name: Publish package
