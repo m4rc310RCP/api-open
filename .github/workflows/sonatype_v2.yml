@@ -21,7 +21,7 @@ jobs:
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
-      - name: Create settings-security.xml
+      - name: Create settings-security.xml <~ OK
         run: >
           echo "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
         env:
