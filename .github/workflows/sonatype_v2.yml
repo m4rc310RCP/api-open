@@ -19,7 +19,7 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Create settings-security.xml <~ OK
+      - name: Create settings-security.xml <~ OK ---
         run: echo "${{ vars.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
         env:
           SETTINGS_SECURITY_XML: ${{ vars.SETTINGS_SECURITY_XML }}
