@@ -10,11 +10,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: adopt
-          java-version: "17"
+          java-version: "21"
       - name: Add additional Maven server to settings.xml
         run: |
           echo "Adding additional Maven server to settings.xml"
@@ -29,11 +29,9 @@ jobs:
         env:
           OSSRH_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
-      - name: Ready .settings.xml
-        run: cat ~/.m2/settings.xml
       - name: Import GPG Key
         run: >
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
 
           gpg --batch --import private_key.asc
         shell: bash
