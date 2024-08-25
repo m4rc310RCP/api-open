@@ -15,7 +15,7 @@ jobs:
         with:
           distribution: adopt
           java-version: "21"
-      - name: Add additional Maven server to settings.xml
+      - name: Add additional Maven server to settings.xml <---
         run: |
           echo "${{ vars.SETTINGS_XML }}" > ~/.m2/settings.xml
       - name: Display modified settings.xml
