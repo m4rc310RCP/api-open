@@ -20,7 +20,7 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
       - name: Create settings-security.xml <~ OK
-        run: echo "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
+        run: echo "${{ vars.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
         env:
           SETTINGS_SECURITY_XML: ${{ vars.SETTINGS_SECURITY_XML }}
       - name: Display modified settings.xml
