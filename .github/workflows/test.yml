@@ -31,16 +31,16 @@ jobs:
           echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
           gpg --batch --import private_key.asc
         shell: bash
-      - name: Get TAG
-        id: get_tag
-        run: echo "TAG=$(git describe --tags --exact-match)" 	
+#      - name: Get TAG
+#        id: get_tag
+#        run: echo "TAG=$(git describe --tags --exact-match)" 	
       - name: Set Maven Version
         id: set_version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo ${GITHUB_REF_NAME#v}
-          echo "mvn versions:set -DnewVersion=${{ env.VERSION }}"
+#          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+#          echo ${GITHUB_REF_NAME#v}
+          echo "mvn versions:set -DnewVersion=${GITHUB_REF_NAME#v}"
  #     - name: Set Maven Version
  #       run: mvn versions:set -DnewVersion=${{ github.ref_name }}
       - name: Configure GPG
