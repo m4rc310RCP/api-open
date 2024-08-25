@@ -32,12 +32,11 @@ jobs:
           gpg --batch --import private_key.asc
         shell: bash
       - name: Set Maven Version
-	    id: set_version
+        id: set_version
         run: |
-		  VERSION=${GITHUB_REF_NAME#v}
+          VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
-		  mvn versions:set -DnewVersion=${{ env.VERSION }}
-		
+          mvn versions:set -DnewVersion=${{ env.VERSION }}	
       - name: Set Maven Version
         run: mvn versions:set -DnewVersion=${{ github.ref_name }}
       - name: Configure GPG
@@ -45,4 +44,5 @@ jobs:
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
           echo "use-agent" >> ~/.gnupg/gpg.conf
       - name: Build with Maven
-        run: mvn clean deploy -s ~/.m2/settings.xml -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --batch-mode
+        run: mvn clean deploy -s ~/.m2/settings.xml -Dgpg.passphrase=${{
+          secrets.GPG_PASSPHRASE }} --batch-mode
