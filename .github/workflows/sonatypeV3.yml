@@ -15,9 +15,15 @@ jobs:
         with:
           distribution: adopt
           java-version: "21"
-      - name: Add additional Maven server to settings.xml <---
-        run: |
-          echo "${{ vars.SETTINGS_XML }}" > ~/.m2/settings.xml
+      - name:
+          run: |
+            echo "Adding additional Maven server to settings.xml"
+              sed -i '/<\/servers>/i\
+                <server>\
+                  <id>ossrh</id>\
+                  <username>'"${{ vars.MVN_CENTRAL_USERNAME }}"'</username>\
+                  <password>'"${{ secrets.MVN_CENTRAL_PASSWORD }}"'</password>\
+                </server>' ~/.m2/settings.xml
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
       - name: Import GPG Key
