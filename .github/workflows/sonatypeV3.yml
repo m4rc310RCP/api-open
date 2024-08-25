@@ -41,4 +41,4 @@ jobs:
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
           echo "use-agent" >> ~/.gnupg/gpg.conf
       - name: Build with Maven
-        run: mvn clean deploy
+        run: mvn clean deploy -s ~/.m2/settings.xml -Dgpg.passphrase=Escol@1979270881 --batch-mode -X
