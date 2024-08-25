@@ -2,8 +2,8 @@
 name: Test 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - v*
 jobs:
   build:
     runs-on: ubuntu-latest
