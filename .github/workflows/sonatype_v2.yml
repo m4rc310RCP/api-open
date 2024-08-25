@@ -22,16 +22,14 @@ jobs:
       - name: Display modified settings.xml
         run: cat ~/.m2/settings.xml
       - name: Create settings-security.xml <~ OK
-        run: >
-          echo "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
+        run: echo "${{ secrets.SETTINGS_SECURITY_XML }}" > ~/.m2/settings-security.xml
         env:
           SETTINGS_SECURITY_XML: ${{ secrets.SETTINGS_SECURITY_XML }}
       - name: Set version
-        #run: mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
-		run: mvn versions:set -DnewVersion=1.0.25
+        run: mvn versions:set -DnewVersion=1.0.25
       - name: Publish package
-        #run: mvn deploy -P release -s /home/runner/.m2/settings.xml
-		run:  mvn clean deploy -P release -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} -s ~/.m2/settings.xml --batch-mode
+        run: mvn clean deploy -P release -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+          -s ~/.m2/settings.xml --batch-mode
         env:
           MAVEN_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MVN_CENTRAL_PASSWORD }}
