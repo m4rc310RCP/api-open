@@ -24,8 +24,6 @@ jobs:
                 <username>'"${{ vars.MVN_CENTRAL_USERNAME }}"'</username>\
                 <password>'"${{ secrets.MVN_CENTRAL_PASSWORD }}"'</password>\
               </server>' ~/.m2/settings.xml
-      - name: Ready .settings.xml
-        run: cat ~/.m2/settings.xml
       - name: Import GPG Key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
@@ -37,6 +35,6 @@ jobs:
         run: |
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
           echo "use-agent" >> ~/.gnupg/gpg.conf
-#      - name: Build with Maven
-#        run: mvn clean deploy -s ~/.m2/settings.xml -Dgpg.passphrase=${{
-#          secrets.GPG_PASSPHRASE }} --batch-mode
+      - name: Build with Maven
+        run: mvn clean deploy -s ~/.m2/settings.xml -Dgpg.passphrase=${{
+          secrets.GPG_PASSPHRASE }} --batch-mode
