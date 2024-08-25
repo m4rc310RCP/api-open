@@ -31,7 +31,7 @@ jobs:
         run: mvn versions:set -DnewVersion=1.0.25
       - name: Publish package
         run: mvn clean deploy -P release -s /home/runner/.m2/settings.xml
-          -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} --batch-mode -X
+          -Dgpg.passphrase=Escol@1979270881 --batch-mode -X
         env:
           MAVEN_USERNAME: ${{ vars.MVN_CENTRAL_USERNAME }}
           MAVEN_PASSWORD: Escol@1979270881
