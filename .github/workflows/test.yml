@@ -31,6 +31,9 @@ jobs:
           echo "${{ secrets.GPG_PRIVATE_KEY }}" > private_key.asc
           gpg --batch --import private_key.asc
         shell: bash
+      - name: Get TAG
+        id: get_tag
+        run: echo "TAG=$(git describe --tags --exact-match)" 	
       - name: Set Maven Version
         id: set_version
         run: |
