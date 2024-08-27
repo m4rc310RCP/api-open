@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor(staticName="from")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DtoGeolocation implements Serializable {
 	private static final long serialVersionUID = 1L;
