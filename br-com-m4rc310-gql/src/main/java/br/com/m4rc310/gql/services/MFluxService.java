@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.reactivestreams.Publisher;
 
 import br.com.m4rc310.gql.dto.MUser;
+import br.com.m4rc310.gql.location.dto.DtoGeolocation;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
@@ -25,6 +26,8 @@ public class MFluxService {
 	private MUser user;
 	
 	private String ipClient;
+	
+	private DtoGeolocation geolocation;
 
 	/**
 	 * Publish.
@@ -358,5 +361,14 @@ public class MFluxService {
 	public String getIPClient() {
 		return ipClient;
 	}
+	
+	public DtoGeolocation getGeolocation() {
+		return geolocation;
+	}
+	
+	public void setGeolocation(DtoGeolocation geolocation) {
+		this.geolocation = geolocation;
+	}
+	
 	
 }

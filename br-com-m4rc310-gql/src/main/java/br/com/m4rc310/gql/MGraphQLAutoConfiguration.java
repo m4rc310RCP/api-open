@@ -424,11 +424,10 @@ public class MGraphQLAutoConfiguration {
 
             flux.setIPClient(ipAddress);
             
-
             filterChain.doFilter(request, response);
         }
     }
-	
+    
 
 	@Bean
 	UserDetailsServiceImpl loadUserDetailsServiceImpl() {
