@@ -21,4 +21,7 @@ public class MWeather {
 	/** The minutely. */
 	@JsonAlias("minutely")
 	private List<MWeatherMinutely> minutely;
+	
+	@JsonAlias("alerts")
+	private List<MWeatherAlert> alerts;
 }
