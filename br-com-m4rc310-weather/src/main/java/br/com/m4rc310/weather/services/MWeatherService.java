@@ -88,7 +88,6 @@ public class MWeatherService {
 	public MWeather getMWeather(BigDecimal lat, BigDecimal lon) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		String json = getMWeatherJSON(lat, lon);
-		System.out.println(json);
 		return mapper.readValue(json, MWeather.class);
 	}
 
