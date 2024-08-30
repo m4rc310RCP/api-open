@@ -22,10 +22,10 @@ public class MWeatherAlert {
 	private String event;
 	
 	@JsonAlias("start")
-	private Date dateStart;
+	private Long dateStart;
 	
 	@JsonAlias("end")
-	private Date dateEnd;
+	private Long dateEnd;
 	
 	@JsonAlias("description")
 	private String description;
