@@ -24,4 +24,9 @@ public class MWeather {
 	
 	@JsonAlias("alerts")
 	private List<MWeatherAlert> alerts;
+	
+	@JsonAlias("daily")
+	private List<MWeatherDaily> daily;
+	
+	
 }
