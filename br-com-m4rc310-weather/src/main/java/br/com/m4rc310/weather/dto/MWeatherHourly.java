@@ -1,6 +1,7 @@
 package br.com.m4rc310.weather.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -74,5 +75,5 @@ public class MWeatherHourly {
 	
 //	hourly.weather
 	@JsonAlias("weather")
-	private MWeatherCurrentWeather weather;
+	private List<MWeatherCurrentWeather> weather;
 }
