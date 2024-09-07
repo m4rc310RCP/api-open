@@ -38,6 +38,11 @@ public class MWeatherDaily {
 	@JsonAlias("moon_phase")
 	private BigDecimal moonPhase;
 	
+//	summary Human-readable description of the weather conditions for the day
+	@JsonAlias("summary")
+	private String summary;
+
+	
 //	summaryHuman-readable description of the weather conditions for the day
 //	daily.temp Units – default: kelvin, metric: Celsius, imperial: Fahrenheit. How to change units used
 //	daily.temp.morn Morning temperature.
