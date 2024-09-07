@@ -28,5 +28,7 @@ public class MWeather {
 	@JsonAlias("daily")
 	private List<MWeatherDaily> daily;
 	
-	
+//	hourly Hourly forecast weather data API response
+	@JsonAlias("hourly")
+	private List<MWeatherHourly> hourly;
 }

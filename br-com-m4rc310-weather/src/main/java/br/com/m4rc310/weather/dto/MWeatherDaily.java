@@ -42,21 +42,14 @@ public class MWeatherDaily {
 	@JsonAlias("summary")
 	private String summary;
 
-	
-//	summaryHuman-readable description of the weather conditions for the day
 //	daily.temp Units – default: kelvin, metric: Celsius, imperial: Fahrenheit. How to change units used
-//	daily.temp.morn Morning temperature.
-//	daily.temp.day Day temperature.
-//	daily.temp.eve Evening temperature.
-//	daily.temp.night Night temperature.
-//	daily.temp.min Min daily temperature.
-//	daily.temp.max Max daily temperature.
-//	daily.feels_like This accounts for the human perception of weather. Units – default: kelvin, metric: Celsius, imperial: Fahrenheit. How to change units used
-//	daily.feels_like.morn Morning temperature.
-//	daily.feels_like.day Day temperature.
-//	daily.feels_like.eve Evening temperature.
-//	daily.feels_like.night Night temperature.
+	@JsonAlias("temp")
+	private MWeatherTemp temp;
 	
+//	daily.feels_like This accounts for the human perception of weather. Units – default: kelvin, metric: Celsius, imperial: Fahrenheit. How to change units used
+	@JsonAlias("feels_like")
+	private MWeatherTemp feelsLike;
+
 //	daily.pressure Atmospheric pressure on the sea level, hPa
 	@JsonAlias("pressure")
 	private BigDecimal pressure;
@@ -102,10 +95,6 @@ public class MWeatherDaily {
 	private BigDecimal snow;
 	
 //	daily.weather
-//	daily.weather.id Weather condition id
-//	daily.weather.main Group of weather parameters (Rain, Snow etc.)
-//	daily.weather.description Weather condition within the group (full list of weather conditions). Get the output in your language
-//	daily.weather.icon Weather icon id. How to get icons
-	
-	
+	@JsonAlias("weather")
+	private MWeatherCurrentWeather weather;
 }
