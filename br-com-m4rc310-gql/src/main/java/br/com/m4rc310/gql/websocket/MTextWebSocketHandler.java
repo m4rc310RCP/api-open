@@ -135,10 +135,12 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 			switch (mmessage.getType()) {
 			case GQL_CONNECTION_INIT:
+				//log.info("-> {} | Payload: {}", GQL_CONNECTION_INIT, message.getPayload());
 				try {
 					MUser user = fromPayload(message.getPayload());
 
-					log.info("User: {}", user);
+					//log.info("User: {}", user);
+					
 					if (jwtService.validateUser(user)) {
 						// SecurityContextHolder.getContext().setAuthentication(new MAuthToken(user));
 						security.authenticate(user);
@@ -157,6 +159,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 				break;
 			case GQL_START:
+				//log.info("-> {} | Payload: {}", GQL_START, message.getPayload());
 				try {
 					if (SecurityContextHolder.getContext().getAuthentication() != null) {
 						GraphQLRequest request = ((MStartMessage) mmessage).getPayload();
@@ -176,6 +179,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 				break;
 			case GQL_STOP:
+				//log.info("-> {} | Payload: {}", GQL_STOP, message.getPayload());
 				Disposable toStop = subscriptions.get(mmessage.getId());
 				if (toStop != null) {
 					toStop.dispose();
@@ -184,12 +188,13 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 				}
 				break;
 			case GQL_CONNECTION_TERMINATE:
+				//log.info("-> {}", GQL_CONNECTION_TERMINATE);
 				session.close();
 				cancelAll();
 				break;
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			//log.error(e.getMessage());
 			fatalError(session, e);
 		}
 	}
@@ -201,6 +206,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 //		final String TEST = "Test";
 //		
 //
+		
+		log.info("Payload: {}", payload);
+		
 		ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		MInitMessage message = mapper.readValue(payload, MInitMessage.class);
 		Map<String, Object> mpay = message.getPayload();
