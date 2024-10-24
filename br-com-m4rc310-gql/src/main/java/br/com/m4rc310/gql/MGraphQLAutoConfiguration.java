@@ -442,8 +442,11 @@ public class MGraphQLAutoConfiguration {
 
 			@Override
 			public Identifier apply(Identifier name, JdbcEnvironment context) {
-				if (name != null && name.getCanonicalName().contains("${")) {
-					String message = name.getCanonicalName();
+				
+				String cn = name == null ? "" : name.getCanonicalName();
+				
+				if (cn.contains("${") && cn.contains("}") ) {
+					String message = cn;
 					message = message.replace("${", "");
 					message = message.replace("}", "");
 
@@ -485,7 +488,7 @@ public class MGraphQLAutoConfiguration {
 			@Override
 			protected Identifier toIdentifier(String stringForm, MetadataBuildingContext buildingContext) {
 
-				if (Objects.nonNull(stringForm) && stringForm.startsWith("${")) {
+				if (Objects.nonNull(stringForm) && stringForm.startsWith("${") && stringForm.endsWith("}")) {
 					stringForm = stringForm.replace("${", "");
 					stringForm = stringForm.replace("}", "");
 
@@ -498,9 +501,9 @@ public class MGraphQLAutoConfiguration {
 						Matcher matcher = pattern.matcher(stringForm);
 
 						while (matcher.find()) {
-							String palavra = matcher.group();
-							log.warn("Message not found for {}", palavra);
-							messageBuilder.appendText(stringForm, palavra);
+							String word = matcher.group();
+							log.warn("Message not found for {}", word);
+							messageBuilder.appendText(stringForm, word);
 						}
 						throw new UnsupportedOperationException(e);
 					}
@@ -512,7 +515,7 @@ public class MGraphQLAutoConfiguration {
 			@Override
 			protected String transformEntityName(EntityNaming entityNaming) {
 				String entityName = super.transformEntityName(entityNaming);
-				if (Objects.nonNull(entityName) && entityName.startsWith("${")) {
+				if (Objects.nonNull(entityName) && entityName.startsWith("${") && entityName.endsWith("}")) {
 					entityName = entityName.replace("${", "");
 					entityName = entityName.replace("}", "");
 
