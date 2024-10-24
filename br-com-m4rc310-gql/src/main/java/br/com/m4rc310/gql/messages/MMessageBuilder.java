@@ -260,7 +260,7 @@ public class MMessageBuilder {
 						
 						map.forEach((k, v) -> {
 							
-							if (!skey.startsWith("DESC")) {
+							if (!skey.equalsIgnoreCase("DESC")) {
 								String a1 = String.format("%s$%s", skey, k.replace(key + ".", "").replace(".", "_"));
 								String a2 = String.format("DESC$%s_%s", skey.toLowerCase(), k.replace(key + ".", "").replace(".", "_"));
 								
@@ -275,6 +275,8 @@ public class MMessageBuilder {
 									action = "@GraphQLSubscription";
 								}else if(skey.equalsIgnoreCase("TYPE")) {
 									action = "@GraphQLType";
+								}else if(skey.equalsIgnoreCase("ARGUMENT") || skey.equalsIgnoreCase("FIELD")) {
+									action = "@GraphQLArgument";
 								}
 								
 								String com = "// %s(name=%s, description=%s)";
