@@ -6,6 +6,7 @@ import static io.leangen.graphql.spqr.spring.web.apollo.ApolloMessage.GQL_START;
 import static io.leangen.graphql.spqr.spring.web.apollo.ApolloMessage.GQL_STOP;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +14,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.reactivestreams.Publisher;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,6 +63,8 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	private final Map<String, Disposable> subscriptions = new ConcurrentHashMap<>();
 	private final AtomicReference<ScheduledFuture<?>> keepAlive = new AtomicReference<>();
 
+	private ApplicationContext context;
+
 	private MGraphQLJwtService jwtService;
 
 //	@Autowired 
@@ -75,13 +80,15 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 	 * @param jwtService        the jwt service
 	 */
 	public MTextWebSocketHandler(GraphQL graphQL, GraphQLWebSocketExecutor executor, TaskScheduler taskScheduler,
-			int keepAliveInterval, MGraphQLJwtService jwtService, MGraphQLSecurity security) {
+			int keepAliveInterval, MGraphQLJwtService jwtService, MGraphQLSecurity security,
+			ApplicationContext context) {
 		this.graphQL = graphQL;
 		this.executor = executor;
 		this.taskScheduler = taskScheduler;
 		this.keepAliveInterval = keepAliveInterval;
 		this.jwtService = jwtService;
 		this.security = security;
+		this.context = context;
 	}
 
 	/**
@@ -135,14 +142,9 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 			switch (mmessage.getType()) {
 			case GQL_CONNECTION_INIT:
-				//log.info("-> {} | Payload: {}", GQL_CONNECTION_INIT, message.getPayload());
 				try {
 					MUser user = fromPayload(message.getPayload());
-
-					//log.info("User: {}", user);
-					
 					if (jwtService.validateUser(user)) {
-						// SecurityContextHolder.getContext().setAuthentication(new MAuthToken(user));
 						security.authenticate(user);
 						session.sendMessage(MMessages.connectionAck());
 						if (taskScheduler != null) {
@@ -159,7 +161,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 				break;
 			case GQL_START:
-				//log.info("-> {} | Payload: {}", GQL_START, message.getPayload());
 				try {
 					if (SecurityContextHolder.getContext().getAuthentication() != null) {
 						GraphQLRequest request = ((MStartMessage) mmessage).getPayload();
@@ -179,7 +180,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 
 				break;
 			case GQL_STOP:
-				//log.info("-> {} | Payload: {}", GQL_STOP, message.getPayload());
 				Disposable toStop = subscriptions.get(mmessage.getId());
 				if (toStop != null) {
 					toStop.dispose();
@@ -188,27 +188,40 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 				}
 				break;
 			case GQL_CONNECTION_TERMINATE:
-				//log.info("-> {}", GQL_CONNECTION_TERMINATE);
 				session.close();
 				cancelAll();
 				break;
 			}
+
+			invokeAnnotatedMethods(mmessage.getType());
 		} catch (Exception e) {
-			//log.error(e.getMessage());
+			// log.error(e.getMessage());
 			fatalError(session, e);
+		}
+	}
+
+	private void invokeAnnotatedMethods(String type) {
+		String[] allBeanNames = context.getBeanDefinitionNames();
+		for (String name : allBeanNames) {
+			Object bean = context.getBean(name);
+
+			Class<?> targetClass = AopUtils.getTargetClass(bean);
+
+			Method[] methods = targetClass.getDeclaredMethods();
+			for (Method method : methods) {
+				if (method.isAnnotationPresent(MStopConnection.class) && type.equalsIgnoreCase(GQL_STOP)) {
+					try {
+						method.invoke(bean);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 
 	private MUser fromPayload(String payload) throws Exception {
 
-//		final String BEARER = "Bearer";
-//		final String BASIC = "Basic";
-//		final String TEST = "Test";
-//		
-//
-		
-		log.info("Payload: {}", payload);
-		
 		ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		MInitMessage message = mapper.readValue(payload, MInitMessage.class);
 		Map<String, Object> mpay = message.getPayload();
@@ -222,18 +235,6 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 				return jwtService.getMUser(type, token);
 			}
 		}
-
-//
-//		if (token.startsWith(TEST) && jwtService.isDev()) {
-//			token = token.replace(TEST, "").trim();
-//			return jwtService.loadUserFromToken(token, MEnumToken.TEST);
-//		} else if (token.startsWith(BEARER)) {
-//			token = token.replace(BEARER, "").trim();
-//			return jwtService.loadUserFromToken(token, MEnumToken.BEARER);
-//		} else if (token.startsWith(BASIC)) {
-//			token = token.replace(BASIC, "").trim();
-//			return jwtService.loadUserFromToken(token, MEnumToken.BASIC);
-//		}
 
 		return null;
 	}

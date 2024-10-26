@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketMessage;
@@ -35,6 +36,7 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 	private final Map<WebSocketSession, HandlerProxy> handlers;
 	private final MGraphQLJwtService jwtService;
 	private MGraphQLSecurity security;
+	private ApplicationContext context;
 
 	/**
 	 * <p>Constructor for MPerConnectionProtocolHandler.</p>
@@ -49,7 +51,7 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 	 */
 	public MPerConnectionProtocolHandler(GraphQL graphQL, GraphQLWebSocketExecutor executor,
 			TaskScheduler taskScheduler, int keepAliveInterval, int sendTimeLimit, int sendBufferSizeLimit,
-			MGraphQLJwtService jwtService, MGraphQLSecurity security) {
+			MGraphQLJwtService jwtService, MGraphQLSecurity security, ApplicationContext context) {
 		super(graphQL, executor, taskScheduler, keepAliveInterval, sendTimeLimit, sendBufferSizeLimit);
 
 		this.graphQL = graphQL;
@@ -61,13 +63,14 @@ public class MPerConnectionProtocolHandler extends PerConnectionApolloHandler {
 		this.handlers = new ConcurrentHashMap<>();
 		this.jwtService = jwtService;
 		this.security = security;
+		this.context = context;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		MTextWebSocketHandler handler = new MTextWebSocketHandler(graphQL, executor, taskScheduler, keepAliveInterval,
-				jwtService, security);
+				jwtService, security, context);
 		HandlerProxy proxy = new HandlerProxy(handler, decorateSession(session));
 
 		this.handlers.put(session, proxy);

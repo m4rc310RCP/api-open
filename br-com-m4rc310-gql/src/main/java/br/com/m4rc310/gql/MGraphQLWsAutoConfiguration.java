@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -48,6 +49,9 @@ public class MGraphQLWsAutoConfiguration extends WebSocketAutoConfiguration  {
 	
 	@Autowired
 	private MGraphQLSecurity security;
+	
+	@Autowired
+	private ApplicationContext context;
 
 	/**
 	 * <p>Constructor for MGraphQLWsAutoConfiguration.</p>
@@ -79,7 +83,7 @@ public class MGraphQLWsAutoConfiguration extends WebSocketAutoConfiguration  {
 		int sendBufferSizeLimit = config.getWs().getSendBufferSizeLimit();
 		
 		return new MPerConnectionProtocolHandler(graphQL, executor, keepAliveEnabled ? defaultTaskScheduler() : null,
-				keepAliveInterval, sendTimeLimit, sendBufferSizeLimit, jwtService, security);
+				keepAliveInterval, sendTimeLimit, sendBufferSizeLimit, jwtService, security, context);
 	}
 	
 	private TaskScheduler defaultTaskScheduler() {

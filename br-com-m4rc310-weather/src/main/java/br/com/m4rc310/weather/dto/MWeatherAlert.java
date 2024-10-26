@@ -1,6 +1,5 @@
 package br.com.m4rc310.weather.dto;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;

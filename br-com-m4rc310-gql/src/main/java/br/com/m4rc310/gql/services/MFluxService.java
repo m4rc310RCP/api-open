@@ -186,7 +186,8 @@ public class MFluxService {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> void callPublish(Class<T> type, Object key, T value) throws Exception {
-		String skey = String.format("%s", key); // makeId(type, key);
+		//String skey = String.format("%s", key); // makeId(type, key);
+		String skey = makeId(type, key);
 		List<FluxSink<?>> sinks = registry.get(skey);
 		if (sinks != null) {
 			sinks.forEach(sub -> ((FluxSink<T>) sub).next(value));
