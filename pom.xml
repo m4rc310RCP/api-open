@@ -22,6 +22,7 @@
 	</developers>
 
 	<properties>
+		<maven-compiler-plugin-artifactId>maven-compiler-plugin</maven-compiler-plugin-artifactId>
 		<lifecycle-mapping-artifactId>lifecycle-mapping</lifecycle-mapping-artifactId>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>17</maven.compiler.target>

@@ -134,6 +134,10 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 			MMessage mmessage;
 			try {
 				mmessage = MMessages.from(message);
+				
+				log.info("Message -> {}", mmessage);
+				log.info("Payload -> {}", message.getPayload());
+				
 			} catch (Exception e) {
 				session.sendMessage(MMessages.connectionError());
 				e.printStackTrace();
