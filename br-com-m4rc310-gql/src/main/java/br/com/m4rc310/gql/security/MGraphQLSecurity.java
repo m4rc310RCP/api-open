@@ -1,6 +1,12 @@
 package br.com.m4rc310.gql.security;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,14 +21,18 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.m4rc310.gql.dto.MUser;
 import br.com.m4rc310.gql.jwt.MGraphQLJwtService;
 import br.com.m4rc310.gql.services.MFluxService;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,8 +65,6 @@ public class MGraphQLSecurity {
 		this.jwt = jwt;
 		this.flux = flux;
 		
-		log.debug("enableSecurity -> {}", enableSecurity);
-
 		if (!enableSecurity) {
 			http = http.cors(AbstractHttpConfigurer::disable);
 			http = http.csrf(AbstractHttpConfigurer::disable);
@@ -64,7 +72,7 @@ public class MGraphQLSecurity {
 					.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 			return http.build();
 		}
-
+				
 		http = http.cors(AbstractHttpConfigurer::disable);
 		http = http.csrf(AbstractHttpConfigurer::disable);
 		http = http.anonymous(AbstractHttpConfigurer::disable);
@@ -91,6 +99,28 @@ public class MGraphQLSecurity {
 					FilterChain filterChain) throws ServletException, IOException {
 
 				try {
+
+//					log.info("Protocol: {}", request.getProtocol());
+					
+					Enumeration<String> headerNames = request.getHeaderNames();
+					while (headerNames.hasMoreElements()) {
+						String name = headerNames.nextElement();
+						String item = String.format("%s : %s", name, request.getHeader(name)) ;
+						log.info(item);
+					}
+					
+					// Wrap request to read the body multiple times
+		            MultiReadHttpServletRequest wrappedRequest = new MultiReadHttpServletRequest(request);
+
+		            // Log body content
+		            String encoding = request.getCharacterEncoding() != null ? request.getCharacterEncoding() : "UTF-8";
+		            String body = StreamUtils.copyToString(wrappedRequest.getInputStream(), Charset.forName(encoding));
+		            log.info("Request Body: " + body);
+		            
+		            log.info("Context Path: " + request.getContextPath());
+					
+					//log.info("Protocol: {}", request.getHeaderNames());
+					
 					
 					resetAuthenticate();
 
@@ -104,7 +134,7 @@ public class MGraphQLSecurity {
 
 					filterChain.doFilter(request, response);
 				} catch (Exception e) {
-					log.debug(e.getMessage(), e);
+					log.debug(e.getMessage());
 					resetAuthenticate();
 					filterChain.doFilter(request, response);
 				}
@@ -117,7 +147,7 @@ public class MGraphQLSecurity {
 
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null,
 				principal.getAuthorities());
-
+		
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(authentication);
 		SecurityContextHolder.setContext(context);
@@ -129,6 +159,56 @@ public class MGraphQLSecurity {
 		SecurityContextHolder.setContext(SecurityContextHolder.createEmptyContext());
 	}
 
+	
+	private static class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
+        private byte[] body;
+
+        public MultiReadHttpServletRequest(HttpServletRequest request) throws IOException {
+            super(request);
+            InputStream inputStream = request.getInputStream();
+            this.body = StreamUtils.copyToByteArray(inputStream);
+        }
+
+        @Override
+        public ServletInputStream getInputStream() {
+            return new ServletInputStreamWrapper(this.body);
+        }
+
+        @Override
+        public BufferedReader getReader() {
+            return new BufferedReader(new InputStreamReader(getInputStream()));
+        }
+    }
+
+    private static class ServletInputStreamWrapper extends ServletInputStream {
+        private final ByteArrayInputStream buffer;
+
+        public ServletInputStreamWrapper(byte[] contents) {
+            this.buffer = new ByteArrayInputStream(contents);
+        }
+
+        @Override
+        public int read() {
+            return buffer.read();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return buffer.available() == 0;
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setReadListener(ReadListener listener) {
+            // Not implemented for simplicity
+        }
+    }
+	
+	
 //	@Bean
 //	PasswordEncoder passwordEncoder() {
 //		return new BCryptPasswordEncoder();

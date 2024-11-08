@@ -135,7 +135,7 @@ public class MTextWebSocketHandler extends TextWebSocketHandler {
 			try {
 				mmessage = MMessages.from(message);
 				
-				log.info("Message -> {}", mmessage);
+				log.info("Message -> {}", message);
 				log.info("Payload -> {}", message.getPayload());
 				
 			} catch (Exception e) {
