@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="https://maven.apache.org/POM/4.0.0">
+	<xs:element name="project">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="modelVersion" type="xs:string" />
+				<xs:element name="parent">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="groupId" type="xs:string" />
+							<xs:element name="artifactId" type="xs:string" />
+							<xs:element name="version" type="xs:string" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="artifactId" type="xs:string" />
+				<xs:element name="dependencies">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="dependency">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="groupId" type="xs:string" />
+										<xs:element name="artifactId" type="xs:string" />
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

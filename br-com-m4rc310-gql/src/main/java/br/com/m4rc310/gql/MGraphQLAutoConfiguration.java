@@ -132,8 +132,6 @@ public class MGraphQLAutoConfiguration {
 		}
 		return encoder;
 	}
-	
-	
 
 	@Scope("singleton")
 	@Bean("message_builder")
@@ -355,9 +353,23 @@ public class MGraphQLAutoConfiguration {
 						}
 					}
 
-					boolean isAuth = principal == null ? false
-							: principal.getAuthorities().stream()
-									.anyMatch(ga -> Arrays.asList(auth.roles()).contains(ga.getAuthority()));
+//					boolean isAuth = principal == null ? false
+//							: principal.getAuthorities().stream()
+//									.anyMatch(ga -> Arrays.asList(auth.roles()).contains(ga.getAuthority()));
+
+					// log.info("----------> {}", isAuth);
+
+					boolean isAuth = principal == null ? false : principal.getAuthorities().stream().anyMatch(ga -> {
+						List<String> roles = Arrays.asList(auth.roles());
+						for (String role : roles) {
+							if (role.equalsIgnoreCase(ga.getAuthority())) {
+								log.info("--> OK {}", ga.getAuthority());
+								return true;
+							}
+						}
+						return false;
+					});
+
 					if (!isAuth) {
 						throw getWebException(401, "Access unauthorizade.");
 					}
@@ -377,11 +389,8 @@ public class MGraphQLAutoConfiguration {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/graphql")
-					.allowedOrigins("*")
-					.allowedMethods("POST", "OPTIONS")
-					.allowedHeaders("Authorization, Content-Type")
-					.maxAge(1728000);
+				registry.addMapping("/graphql").allowedOrigins("*").allowedMethods("POST", "OPTIONS")
+						.allowedHeaders("Authorization, Content-Type").maxAge(1728000);
 			}
 		};
 	}
@@ -399,35 +408,34 @@ public class MGraphQLAutoConfiguration {
 			error = String.format(error, IMAuthUserProvider.class.getName());
 			throw new UnsupportedOperationException(error);
 		}
-		
+
 		http.addFilterBefore(new IpCaptureFilter(flux), UsernamePasswordAuthenticationFilter.class);
-		
+
 		return graphQLSecurity.getSecurityFilterChain(http, jwt, provider, flux);
 	}
-	
-    public class IpCaptureFilter extends OncePerRequestFilter {
-    	
-        private final MFluxService flux;
+
+	public class IpCaptureFilter extends OncePerRequestFilter {
+
+		private final MFluxService flux;
 
 		public IpCaptureFilter(MFluxService flux) {
-        	this.flux = flux;
+			this.flux = flux;
 		}
 
 		@Override
-        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-                throws ServletException, IOException {
+		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+				FilterChain filterChain) throws ServletException, IOException {
 
-            String ipAddress = request.getHeader("X-Forwarded-For");
-            if (ipAddress == null || ipAddress.isEmpty()) {
-                ipAddress = request.getRemoteAddr();  
-            }
+			String ipAddress = request.getHeader("X-Forwarded-For");
+			if (ipAddress == null || ipAddress.isEmpty()) {
+				ipAddress = request.getRemoteAddr();
+			}
 
-            flux.setIPClient(ipAddress);
-            
-            filterChain.doFilter(request, response);
-        }
-    }
-    
+			flux.setIPClient(ipAddress);
+
+			filterChain.doFilter(request, response);
+		}
+	}
 
 	@Bean
 	UserDetailsServiceImpl loadUserDetailsServiceImpl() {
@@ -442,10 +450,10 @@ public class MGraphQLAutoConfiguration {
 
 			@Override
 			public Identifier apply(Identifier name, JdbcEnvironment context) {
-				
+
 				String cn = name == null ? "" : name.getCanonicalName();
-				
-				if (cn.contains("${") && cn.contains("}") ) {
+
+				if (cn.contains("${") && cn.contains("}")) {
 					String message = cn;
 					message = message.replace("${", "");
 					message = message.replace("}", "");
