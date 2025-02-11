@@ -1,0 +1,63 @@
+---
+name: CI/CD Workflow
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Setup Maven Settings
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings>
+            <servers>
+              <server>
+                <id>ossrh</id>
+                <username>${{ vars.MVN_CENTRAL_USERNAME }}</username>
+                <password>${{ secrets.MVN_CENTRAL_PASSWORD }}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+
+      - name: Import GPG Key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+          gpg --batch --import private_key.asc
+          gpg --list-secret-keys --keyid-format LONG
+          gpg --armor --export CEF6351C3F73DF2A > public_key.asc
+          gpg --keyserver keyserver.ubuntu.com --send-keys CEF6351C3F73DF2A
+
+      - name: Configure GPG Agent
+        run: |
+          export GPG_TTY=$(tty)
+          echo "GPG_TTY=$GPG_TTY" >> $GITHUB_ENV
+          mkdir -p ~/.gnupg
+          echo "use-agent" > ~/.gnupg/gpg.conf
+          echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          gpgconf --kill gpg-agent
+          gpgconf --launch gpg-agent
+
+      - name: Set Maven Version
+        run: mvn versions:set -DnewVersion=${GITHUB_REF_NAME#v}
+
+      - name: Build and Deploy with Maven
+        run: |
+          mvn clean deploy -s ~/.m2/settings.xml \
+            -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }} \
+            --batch-mode
