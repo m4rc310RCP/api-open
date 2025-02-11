@@ -324,6 +324,7 @@ public class MGraphQLAutoConfiguration {
 //		return schemaGenerator.generate();
 //	}
 
+	
 	@Bean
 	ExtensionProvider<GeneratorConfiguration, ResolverInterceptorFactory> customInterceptors() {
 		List<ResolverInterceptor> authInterceptor = Collections.singletonList(new AuthInterceptor());
