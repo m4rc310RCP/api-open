@@ -4,7 +4,7 @@ name: CI/CD Workflow
 on:
   push:
     tags:
-      - v*
+      - v_*
 
 jobs:
   build:
