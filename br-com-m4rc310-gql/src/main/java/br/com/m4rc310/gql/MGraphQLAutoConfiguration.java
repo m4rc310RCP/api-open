@@ -355,9 +355,20 @@ public class MGraphQLAutoConfiguration {
 						}
 					}
 
-					boolean isAuth = principal == null ? false
-							: principal.getAuthorities().stream()
-									.anyMatch(ga -> Arrays.asList(auth.roles()).contains(ga.getAuthority()));
+//					boolean isAuth = principal == null ? false
+//							: principal.getAuthorities().stream()
+//									.anyMatch(ga -> Arrays.asList(auth.roles()).contains(ga.getAuthority()));
+					
+					boolean isAuth = principal == null ? false : 
+						principal.getAuthorities().stream().anyMatch(ga -> {
+							for (String role : auth.roles()) {
+								if (role.equalsIgnoreCase(ga.getAuthority())) {
+									return true;
+								}
+							}
+							return false;
+						});					
+					
 					if (!isAuth) {
 						throw getWebException(401, "Access unauthorizade.");
 					}
